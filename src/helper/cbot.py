@@ -1,0 +1,190 @@
+from asyncio import AbstractEventLoop
+from typing import Optional, Sequence, Coroutine
+
+import aiohttp
+import disnake
+from disnake.ext import commands
+from motor.motor_asyncio import AsyncIOMotorClient
+
+from helper.models import init_models
+from helper.settings import BotSettings, Settings, LoggingLevels, LoggerConfig
+import logging
+import sys
+from os import PathLike
+
+
+class DatBot(commands.InteractionBot):
+    config: BotSettings
+    _db_conn: AsyncIOMotorClient
+    log: logging.Logger
+
+    def __init__(
+        self,
+        *,
+        owner_id: Optional[int] = None,
+        owner_ids: Optional[set[int]] = None,
+        reload: bool = False,
+        command_sync_flags: commands.CommandSyncFlags = commands.CommandSyncFlags.default(),
+        test_guilds: Optional[Sequence[int]] = None,
+        asyncio_debug: bool = False,
+        loop: Optional[AbstractEventLoop] = None,
+        shard_id: Optional[int] = None,
+        shard_count: Optional[int] = None,
+        enable_debug_events: bool = False,
+        enable_gateway_error_handler: bool = True,
+        gateway_params: Optional[disnake.GatewayParams] = None,
+        connector: Optional[aiohttp.BaseConnector] = None,
+        proxy: Optional[str] = None,
+        proxy_auth: Optional[aiohttp.BasicAuth] = None,
+        assume_unsync_clock: bool = True,
+        max_messages: Optional[int] = 1000,
+        application_id: Optional[int] = None,
+        heartbeat_timeout: float = 60,
+        guild_ready_timeout: float = 2,
+        allowed_mentions: Optional[disnake.AllowedMentions] = None,
+        activity: Optional[disnake.BaseActivity] = None,
+        status: Optional[disnake.Status | str] = None,
+        intents: Optional[disnake.Intents] = None,
+        chunk_guilds_at_startup: Optional[bool] = None,
+        member_cache_flags: Optional[disnake.MemberCacheFlags] = None,
+        localization_provider: Optional[disnake.LocalizationProtocol] = None,
+        strict_localization: bool = False,
+        bot_config: BotSettings = Settings,
+    ):
+        self.closeList: list[tuple[str, Coroutine]] = []
+        super().__init__(
+            owner_id=owner_id,
+            owner_ids=owner_ids,
+            reload=reload,
+            command_sync_flags=command_sync_flags,
+            test_guilds=test_guilds,
+            asyncio_debug=asyncio_debug,
+            loop=loop,
+            shard_id=shard_id,
+            shard_count=shard_count,
+            enable_debug_events=enable_debug_events,
+            enable_gateway_error_handler=enable_gateway_error_handler,
+            gateway_params=gateway_params,
+            connector=connector,
+            proxy=proxy,
+            proxy_auth=proxy_auth,
+            assume_unsync_clock=assume_unsync_clock,
+            max_messages=max_messages,
+            application_id=application_id,
+            heartbeat_timeout=heartbeat_timeout,
+            guild_ready_timeout=guild_ready_timeout,
+            allowed_mentions=allowed_mentions,
+            activity=activity,
+            status=status,
+            intents=intents,
+            chunk_guilds_at_startup=chunk_guilds_at_startup,
+            member_cache_flags=member_cache_flags,
+            localization_provider=localization_provider,
+            strict_localization=strict_localization,
+        )
+
+        self.config = bot_config
+        self._db_conn = AsyncIOMotorClient(self.config.connections.mongo)
+
+        for k, v in self.config.logging:
+            v: LoggerConfig  # TODO ?
+            if v.enable:
+                self.configure_logger(k, v.logfile, v.level.value, v.format)
+            else:
+                self.configure_logger_stream(k, v.level, v.format)
+        self.log = self.get_logger("cogs")
+
+    async def start(
+        self,
+        token: str,
+        *,
+        reconnect: bool = True,
+        ignore_session_start_limit: bool = False,
+    ) -> None:
+        if self.reload:
+            self.loop.create_task(self._watchdog())  # type: ignore
+        return await super().start(
+            token=token,
+            reconnect=reconnect,
+            ignore_session_start_limit=ignore_session_start_limit,
+        )
+
+    @classmethod
+    def from_settings(cls, settings: BotSettings = Settings):
+        return cls(
+            owner_ids=settings.bot.owner_ids,
+            test_guilds=settings.bot.test_guilds,
+            intents=disnake.Intents(settings.bot.intents_flag),
+            reload=settings.bot.reload_flag,
+            activity=disnake.Activity(
+                name=settings.bot.activity_str,
+                type=disnake.ActivityType(settings.bot.activity_type),
+            ),
+            status=disnake.Status.online,
+            command_sync_flags=commands.CommandSyncFlags._from_value(
+                settings.bot.command_flag
+            ),
+            bot_config=settings,
+        )
+
+    log_format = "%(asctime)s:%(levelname)s:%(name)s: %(message)s"
+
+    def _configure_logger(self, name: str, level: LoggingLevels = LoggingLevels.INFO):
+        logger = logging.getLogger(name)
+        logger.setLevel(level)
+        return logger
+
+    def configure_logger(
+        self,
+        name: str,
+        fp: PathLike,
+        level: LoggingLevels = LoggingLevels.ERROR,
+        format: str = log_format,
+    ):
+        logger = self._configure_logger(name, level)
+        handler = logging.FileHandler(filename=fp, encoding="utf-8", mode="w")
+        handler.setFormatter(logging.Formatter(format, style="{"))
+        logger.addHandler(handler)
+        return logger
+
+    def configure_logger_stream(
+        self,
+        name: str,
+        level: LoggingLevels = LoggingLevels.DEBUG,
+        format: str = log_format,
+    ):
+        logger = self._configure_logger(name, level)
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(logging.Formatter(format, style="{"))
+        logger.addHandler(handler)
+        return logger
+
+    def make_http(self, name: str, *args, **kwargs) -> aiohttp.ClientSession:
+        """Make a aiohttp session and register the closing functions"""
+        sess = aiohttp.ClientSession(*args, **kwargs)
+        self.closeList.append(("cogs." + name, sess.close()))
+        return sess
+
+    def register_aclose(self, name: str, func: Coroutine):
+        """Appends a close method the close list"""
+        if not isinstance(func, Coroutine):
+            raise TypeError("Not coroutine")
+        self.closeList.append(("cogs." + name, func))
+
+    def get_logger(self, name: str):
+        return logging.getLogger(name)
+
+    async def on_connect(self):
+        self.log.info("Connecting...")
+        self.log.debug("Loading beanie models")
+        await init_models(self._db_conn)
+
+    async def on_ready(self):
+        self.log.info(f"{self.user.display_name}#{self.user.discriminator} is ready!")
+
+    async def close(self) -> None:
+        self.log.info("Shutting down bot!")
+        for name, close in self.closeList:
+            self.log.info(f"running '{name}' Close coroutine")
+            await close
+        await super().close()

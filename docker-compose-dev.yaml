@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  bot-dev:
+    build: .
+    networks:
+      - internal
+    volumes:
+      - ./config.toml:/app/config.toml:rw
+      - ./.env:/app/.env:rw
+      - ./.ignored/music:/app/music:rw
+      - ./.ignored/temp:/app/temp:rw
+      - ./src/cogs:/app/cogs:rw
+    links:
+      - "lavalink:lavalink"
+      - "snekbox:snekbox"
+
+  lavalink:
+    image: fredboat/lavalink
+    networks:
+      - internal
+    volumes:
+      - ./.ignored/application.yml/:/opt/Lavalink/application.yml:rw
+
+  snekbox:
+    image: ghcr.io/python-discord/snekbox:latest
+    networks:
+      - internal
+    ipc: none
+    privileged: true
+
+networks:
+  internal: {}

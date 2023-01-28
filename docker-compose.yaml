@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  bot:
+    build: .
+    # image: buckybubba/datbot:latest
+    volumes:
+      - ./config.toml:/app/config.toml:rw
+
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN} # Set to the bot token
+    networks:
+      - internal
+    links:
+      - "mongo:mongo"
+      - "snekbox:snekbox"
+      - "lavalink:lavalink"
+
+  mongo:
+    image: mongo
+    networks:
+      - internal
+
+  snekbox:
+    image: ghcr.io/python-discord/snekbox:latest
+    networks:
+      - internal
+    ipc: none
+    privileged: true
+
+  lavalink:
+    image: fredboat/lavalink
+    networks:
+      - internal
+    volumes:
+      - ./application.yml:/opt/Lavalink/application.yml:rw
+
+networks:
+  internal: {}

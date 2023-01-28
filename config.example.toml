@@ -1,0 +1,38 @@
+[connections] # Database connections
+mongo = "mongodb://mongo:27017"
+
+[bot] # bot settings
+reload = false
+command_flag = 30
+intents_flag = 3276799
+activity_str = "The Ducks"
+activity_type = 3
+owner_ids = [111111111111111111] # replace with owner ids or leave blank for auto
+test_guilds = [111111111111111111, 111111111111111111]  # Test guilds register commands faster
+dev_guilds = [111111111111111111, 111111111111111111]   # Dev guilds have dev commands enabled, and provide debugging tools
+
+[keys] # some default credentials for bundled services
+wavelink = { host = "lavalink", port = 2333, password = "youshallnotpass" }
+snekbox = { url = "http://snekbox:8060" }
+piston = { url = "https://emkc.org/" }
+
+
+[dir] # directories for various cogs
+music = { name = "music", path = "./music", data = { data = "..." } }
+temp = { name = "temp", path = "./temp" }
+
+
+[logging.cogs] 
+enable = false # enable logging to files
+logfile = "./cogs.log" # file to log to
+level = 10
+    # logging levels
+    # CRITICAL = 50
+    # ERROR = 40
+    # WARNING = 30
+    # INFO = 20
+    # DEBUG = 10
+    # NOTSET = 0
+[logging.disnake]
+enable = true
+logfile = "./disnake.log"
