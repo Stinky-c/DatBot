@@ -2,8 +2,7 @@ version: '3'
 
 services:
   bot:
-    build: .
-    # image: buckybubba/datbot:latest
+    image: ghcr.io/stinky-c/datbot:master
     volumes:
       - ./config.toml:/app/config.toml:rw
 
