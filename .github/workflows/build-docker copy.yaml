@@ -1,0 +1,40 @@
+on:
+  push:
+    branches: ["master"]
+
+env:
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get short sha
+        id: short_sha
+        run: |
+          set -eu
+          short_sha=$(git rev-parse --short HEAD)
+          echo "short_sha=$short_sha" >> $GITHUB_OUTPUT
+          printf "%s\n" "${short_sha}"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN  }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ env.IMAGE_NAME }}:${{ steps.short_sha.outputs.short_sha }},ghcr.io/${{ env.IMAGE_NAME }}:latest
