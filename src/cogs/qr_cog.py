@@ -13,6 +13,7 @@ from qrcode.constants import ERROR_CORRECT_H
 from qrcode.image.styledpil import SolidFillColorMask
 
 # TODO:
+# doc strings...
 # resizing
 # random things to say when sending
 # this file: to use pil then default to pymaging on import error

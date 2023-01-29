@@ -68,7 +68,9 @@ class LavaLinkCog(commands.Cog):
     async def play(self, inter: CmdInter, vc: Player, search: str):
         """Play a song with the given search query.
 
-        If not connected, connect to our voice channel.
+        Parameters
+        ----------
+        search: a youtube search term
         """
         await inter.response.defer()
         toplay = await wavelink.YouTubeTrack.search(search, return_first=True)

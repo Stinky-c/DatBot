@@ -24,7 +24,12 @@ class ExampleCog(commands.Cog):
         self.log.debug(f"{inter.author.name} @ {inter.guild.name}")
 
     @cmd.sub_command(name="ping")
-    async def ping(self, inter: CmdInter):
+    async def ping(self, inter: CmdInter,abc:str):
+        """ Placeholder
+        Parameters
+        ----------
+        abc: placeholder
+"""
         await inter.response.send_message(f"Pong! {round(self.bot.latency * 1000)}ms")
 
 

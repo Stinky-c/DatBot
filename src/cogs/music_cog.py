@@ -72,9 +72,14 @@ class Music(commands.Cog):
     async def music_(self, inter: CmdInter):
         pass
 
-    @music_.sub_command()
-    async def join(self, inter: CmdInter, *, channel: disnake.VoiceChannel):
-        """Joins a voice channel"""
+    @music_.sub_command("play")
+    async def join_(self, inter: CmdInter, *, channel: disnake.VoiceChannel):
+        """Joins a voice channel
+        Parameters
+        ----------
+        channel: a voice channel to connect to
+
+        """
 
         if inter.guild.voice_client is not None:
             await inter.guild.voice_client.move_to(channel)
@@ -82,9 +87,13 @@ class Music(commands.Cog):
             await channel.connect()
         await inter.send("connected")
 
-    @music_.sub_command()
-    async def play(self, inter: CmdInter, *, query: str):
-        """Plays a file from the local filesystem"""
+    @music_.sub_command("play")
+    async def play_(self, inter: CmdInter, *, query: str):
+        """Plays a file from the local filesystem
+        Parameters
+        ----------
+        query: file path
+        """
         await self.ensure_voice(inter)
         source = disnake.PCMVolumeTransformer(disnake.FFmpegPCMAudio(query))
         inter.guild.voice_client.play(
@@ -93,14 +102,23 @@ class Music(commands.Cog):
 
         await inter.send(f"Now playing: {query}")
 
-    @music_.sub_command()
-    async def yt(self, inter: CmdInter, *, url: str):
-        """Plays from a url (almost anything youtube_dl supports)"""
+    @music_.sub_command("url")
+    async def url_(self, inter: CmdInter, *, url: str):
+        """Plays from a url (almost anything youtube_dl supports)
+        Parameters
+        ----------
+        url: a url
+        """
         await self._play_url(inter, url=url, stream=False)
 
     @music_.sub_command()
     async def stream(self, inter: CmdInter, *, url: str):
-        """Streams from a url (same as yt, but doesn't predownload)"""
+        """Streams from a url. useful for larger files
+
+        Parameters
+        ----------
+        url: a url
+        """
         await self._play_url(inter, url=url, stream=True)
 
     async def _play_url(self, inter: CmdInter, *, url: str, stream: bool):
@@ -114,8 +132,12 @@ class Music(commands.Cog):
         await inter.send(f"Now playing: {player.title}")
 
     @music_.sub_command()
-    async def volume(self, inter: CmdInter, volume: int):
-        """Changes the player's volume"""
+    async def volume(self, inter: CmdInter, volume: int = commands.Param(ge=1,le=100)):
+        """Changes the player's volume
+        Parameters
+        ----------
+        volume: volume between 1 and 100
+        """
 
         if inter.guild.voice_client is None:
             return await inter.send("Not connected to a voice channel.")

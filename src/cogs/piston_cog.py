@@ -41,8 +41,6 @@ class PistonCog(commands.Cog):
         version: str,
         compile_timeout: int = 10000,
         run_timeout: int = 5000,
-        # compile_memory_limit: int = -1,
-        # run_memory_limit: int = -1,
     ) -> PistonEvalResponse:
         data = {
             "language": lang,
@@ -70,7 +68,7 @@ class PistonCog(commands.Cog):
                     runtimes[o] = (i.get("language"), i.get("version"))
         return runtimes
 
-    @commands.message_command(name="piston")
+    @commands.message_command("piston")
     async def eval_(self, inter: CmdInter, message: disnake.Message):
         for i in FORMATTED_CODE_REGEX.finditer(message.content):
             await inter.response.defer()
@@ -78,20 +76,6 @@ class PistonCog(commands.Cog):
             code = i.group("code")
             evalJob = await self.eval_piston(code, lang, version)
             await inter.send(evalJob.compile.stdout)
-            ...
-
-    @commands.slash_command(name=name)
-    async def cmd(self, inter: CmdInter):
-        self.log.debug(f"{inter.author.name} @ {inter.guild.name}")
-
-    # @cmd.sub_command(name="runtimes")
-    async def get_runtimes_(self, inter: CmdInter):
-        mess = ""
-        for i in self.runtimes:
-            mess += f"{i['language']} - {i['version']}\n"
-
-        await inter.send(mess)
-        pass
 
 
 def setup(bot: DatBot):

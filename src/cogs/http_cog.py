@@ -21,19 +21,27 @@ class HTTPCog(commands.Cog):
     async def cmd(self, inter: CmdInter):
         self.log.debug(f"{inter.author.name} @ {inter.guild.name}")
 
-    @cmd.sub_command(
-        name="cat", description="Sends a cat based on a given HTTP status code"
-    )
+    @cmd.sub_command("cat")
     async def cat_(self, inter: CmdInter, code: int):
+        """Sends a cat from an HTTP status code
+        Parameters
+        ----------
+        code: an HTTP code
+        """
+
         if code in HTTP_CODES:
             await inter.send(f"https://http.cat/{code}.jpg")
         else:
             await inter.send("https://http.cat/404.jpg")
 
-    @cmd.sub_command(
-        name="dog", description="Sends a dog based on a given HTTP status code"
-    )
+    @cmd.sub_command("dog")
     async def dog_(self, inter: CmdInter, code: int):
+        """Sends a cog from an HTTP status code
+        Parameters
+        ----------
+        code: an HTTP code
+        """
+
         if code in HTTP_CODES:
             await inter.send(f"https://http.dog/{code}.jpg")
         else:
@@ -42,16 +50,21 @@ class HTTPCog(commands.Cog):
     @commands.is_owner()
     @cmd.sub_command(name="get")
     async def get_(self, inter: CmdInter, url: URL):
+        """using a client, GET's a url
+        Parameters
+        ----------
+        url: a fully qualified URL"""
         async with self.client.get(str(url)) as req:
             await inter.send(req.status)
 
     @commands.is_owner()
     @cmd.sub_command(name="decode", description="URL decodes a given string")
-    async def decode_(
-        self,
-        inter: CmdInter,
-        content: str,
-    ):
+    async def decode_(self, inter: CmdInter, content: str):
+        """url decodes a string
+        Parameters
+        ----------
+        content: a urlencoded string
+        """
         await inter.send(unquote(content))
 
 

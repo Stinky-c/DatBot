@@ -17,7 +17,8 @@ class ModerationCog(commands.Cog):
     async def cmd(self, inter: CmdInter):
         ...
 
-    @cmd.sub_command(name="ban")
+    @cmd.sub_command("ban")
+    @commands.has_permissions(ban_members=True)
     async def ban_(
         self,
         inter: CmdInter,
@@ -26,8 +27,16 @@ class ModerationCog(commands.Cog):
         clean_duration: int = 604800,
         ephemeral: bool = False,
     ):
+        """Bans a user
+        Parameters
+        ----------
+        user: a user to ban
+        reason: A custom message
+        clean_duration: amount of time to clean messages
+        ephemeral: hide the response message
+        """
         await user.ban(reason, clean_history_duration=clean_duration)
-        await inter.response.send_message(
+        await inter.send(
             f"'{user.name}' has been banned for '{reason}'", ephemeral=ephemeral
         )
 

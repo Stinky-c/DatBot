@@ -26,16 +26,15 @@ class DevCog(commands.Cog):
     async def cmd(self, inter: CmdInter):
         self.log.debug(f"{inter.author} @ {inter.guild.name}: {inter.id}")
 
-    @cmd.sub_command(name="close", description="Stops the bot")
+    @cmd.sub_command("close")
     async def stop_(self, inter: CmdInter):
+        """Stops the bot"""
         await inter.send(await gen_quote())
         await self.bot.close()
 
-    @cmd.sub_command(
-        name="info",
-        description="Returns various system information",
-    )
+    @cmd.sub_command("info")
     async def info_(self, inter: CmdInter):
+        """Returns various system information"""
 
         vmem = psutil.virtual_memory()
         duse = psutil.disk_usage("/")
@@ -78,41 +77,50 @@ class DevCog(commands.Cog):
         }
         await inter.send(embed=disnake.Embed.from_dict(embed_dict))
 
-    @cmd.sub_command(name="cog", description="Returns a UI for changing cog settings")
+    @cmd.sub_command("cog")
     async def cSettings_(self, inter: CmdInter):
+        """Returns a UI for changing cog settings"""
         # TODO: cog settings
         await inter.send(view=CogSelectView(), ephemeral=True)
         ...
 
-    @cmd.sub_command(name="unload", description="unloads a cog from the bot")
+    @cmd.sub_command("unload")
     async def unload_(
         self, inter: CmdInter, cog: str = commands.Param(choices=Settings.bot.cogs)
     ):
+        """unloads a cog from the bot
+
+        Parameters
+        ----------
+        cog: The cog path to unload
+        """
         self.bot.unload_extension(cog)
         Settings.bot.cogs.remove(cog)
         await inter.send(f"`{cog}` has been unloaded {Emojis.thumbs_up.value}")
 
-    @cmd.sub_command(name="load", description="loads a cog from the bot")
+    @cmd.sub_command("load")
     async def load_(
         self, inter: CmdInter, cog: str = commands.Param(choices=Settings.bot.cogs)
     ):
+        """loads a cog from the bot
+
+        Parameters
+        ----------
+        cog: The cog path to unload
+        """
         self.bot.load_extension(cog)
         await inter.send(f"`{cog}` has been loaded {Emojis.thumbs_up.value}")
 
-    @cmd.sub_command(name="adddev")
+    @cmd.sub_command("adddev")
     async def add_dev_(self, inter: CmdInter, id: disnake.Guild):
+        """adds a new user to the dev group"""
         if g := self.bot.get_guild(id):
             self.cmd.guild_ids.appened(id)
             await inter.send(f"Added '{g.name}' to the dev servers")
         else:
             await inter.send("Failed to add that server to my lists")
 
-    @cmd.sub_command(name="toggle")
-    async def toggle_(self, inter: CmdInter):
-        self.bot.reload = not self.bot.reload
-        await inter.send(f"Bot reload has been toggled\nStatus: `{self.bot.reload}`")
-
-    @cmd.sub_command(name="embed")
+    @cmd.sub_command("embed")
     async def emebed_img_(
         self,
         inter: CmdInter,
@@ -120,6 +128,14 @@ class DevCog(commands.Cog):
         url: str,
         message: str,
     ):
+        """
+
+        Parameters
+        ----------
+        file: An image to add
+        url: A url to add
+        message: The message to add
+        """
         await inter.response.defer()
         link = LinkTuple("Click Here!", url)
         await inter.channel.send(
@@ -127,18 +143,25 @@ class DevCog(commands.Cog):
         )
         await inter.send("Message Posted", ephemeral=True)
 
-    @cmd.sub_command(name="save")
+    @cmd.sub_command("save")
     async def save_config_(
         self, inter: CmdInter, path: str = commands.Param("config.toml")
     ):
+        """Saves the config to path
+        Parameters
+        ----------
+        path: the path to write to
+        """
         Settings.save(path)
         await inter.send(f"Config saved {Emojis.thumbs_up.value}")
 
-    @cmd.sub_command(
-        name="iseven",
-        description="Uses the Is Even api to test whether an number is even",
-    )
+    @cmd.sub_command("iseven")
     async def iseven_(self, inter: CmdInter, number: commands.LargeInt):
+        """Uses the Is Even api to test whether an number is even
+        Parameters
+        ----------
+        number: A number to check if is even
+        """
         url = f"https://api.isevenapi.xyz/api/iseven/{number}/"
         async with self.httpclient.get(url) as res:
             json: dict = await res.json()
@@ -169,48 +192,59 @@ class DevCog(commands.Cog):
         await inter.send(embed=embed)
         pass
 
-    @cmd.sub_command(
-        name="gifiy", description="Transforms an image to a gif using filenames"
-    )
+    @cmd.sub_command("gifiy")
     async def gifiy_(self, inter: CmdInter, file: disnake.Attachment):
+        """Transforms an image to a gif using filenames
+
+        Parameters
+        ----------
+        file: a png or jpeg to covert
+        """
         await inter.response.defer()
         oldfn = file.filename.split(".")[:-1]
         fn = "".join([*oldfn, ".gif"])
         newf = await file.to_file(filename=fn)
         await inter.send("Transformed!", file=newf)
-        ...
-
-    @commands.is_owner()
-    # @commands.message_command(name="get")
-    async def get_message_(self, inter: CmdInter, message: disnake.Message):
-        """find a way to get raw message content"""
-        await inter.send(
-            f"```{disnake.utils.escape_markdown(message.clean_content)}```"
-        )
 
     @cmd.sub_command_group(name="quote")
     async def quote_(self, inter: CmdInter):
         ...
 
-    @quote_.sub_command(name="add", description="Adds a new quote to the database")
+    @quote_.sub_command("add")
     async def add_quote_(self, inter: CmdInter, quote: str):
+        """Adds a new quote to the database
+        Parameters
+        ----------
+        quote: a new qoute to add to the database
+        """
+
         # TODO maybe add tags?
         q = await Quote(quote=quote).create()
         await inter.send(f"Quote created and Saved\n`{q.id}`")
 
-    @quote_.sub_command(name="random", description="Returns a random quote")
+    @quote_.sub_command("random")
     async def random_quote_(
         self,
         inter: CmdInter,
         count: int = commands.Param(1, description="A number then 7", gt=0, le=7),
     ):
+        """Returns a random qoute from the database
+        Parameters
+        ----------
+        count: a number of quotes between 0 and 7
+        """
         await inter.send(await gen_quote())
         if count > 1:
             for _ in range(count - 1):
                 await inter.channel.send(await gen_quote())
 
-    @quote_.sub_command(name="remove", description="Removes a quote. Requires the UUID")
+    @quote_.sub_command("remove")
     async def remove_quote_(self, inter: CmdInter, id: UUID):
+        """Removes a quote from the database
+        Parameters
+        ----------
+        id: A uuid for the quote
+        """
         q = await Quote.find_one(Quote.id == id)
         if not q:
             await inter.send("Quote not found")
@@ -218,16 +252,22 @@ class DevCog(commands.Cog):
         await q.delete()
         await inter.send(f"Quote `{q.id}` deleted")
 
-    @quote_.sub_command(name="search", description="Finds a quote from a given UUID")
+    @quote_.sub_command("search")
     async def search_quote_(self, inter: CmdInter, id: UUID):
+        """Finds a quote in the database
+        Parameters
+        ----------
+        id: A uuid for the quote
+        """
         q = await Quote.find_one(Quote.id == id)
         if not q:
             await inter.send("404 Quote not found")
             return
         await inter.send(q.quote)
 
-    @quote_.sub_command(name="count", description="Returns the amount of quotes")
+    @quote_.sub_command("count")
     async def count_quotes_(self, inter: CmdInter):
+        """Counts the amount of quotes in the database"""
         await inter.send(f"I have {await Quote.count()} quotes saved!")
 
 

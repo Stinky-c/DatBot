@@ -70,9 +70,7 @@ class SomeoneCog(commands.Cog):
     async def cmd(self, inter: CmdInter):
         ...
 
-    @cmd.sub_command(
-        name="setup", description="Sets up the guilds someone subscriber list"
-    )
+    @cmd.sub_command("setup")
     async def setup_roles_(
         self,
         inter: CmdInter,
@@ -80,6 +78,13 @@ class SomeoneCog(commands.Cog):
         listen_role: disnake.Role,
         s: Server,
     ):
+        """Sets up the guilds someone subscriber list
+
+        Parameters
+        ----------
+        subscribe_role: a role to pick from when listen role is pinged
+        listen_role: a role to listen
+        """
         someone = SomeoneRoles(mention=listen_role.id, subscriber=subscribe_role.id)
         s.someone = someone
         await s.save()
@@ -87,8 +92,9 @@ class SomeoneCog(commands.Cog):
             f"Setup complete\nListen role: {someone.mention}\nSubscriber Role: {someone.subscriber}"
         )
 
-    @cmd.sub_command(name="add", description="Joins the guilds someone subscriber list")
+    @cmd.sub_command("add")
     async def join_(self, inter: CmdInter, s: SomeoneRoles):
+        """Joins the guilds someone subscriber list"""
         role = inter.guild.get_role(s.mention)
 
         await inter.author.add_roles(
@@ -98,10 +104,9 @@ class SomeoneCog(commands.Cog):
             f"You subscribed to the `{role.name}` mention list"
         )
 
-    @cmd.sub_command(
-        name="leave", description="Leaves the guilds Someone subscriber list"
-    )
+    @cmd.sub_command("leave")
     async def leave_(self, inter: CmdInter, s: SomeoneRoles):
+        """Leaves the guilds Someone subscriber list"""
         role = inter.guild.get_role(s.mention)
 
         await inter.author.remove_roles(
@@ -115,7 +120,6 @@ class SomeoneCog(commands.Cog):
     async def someone_(self, message: disnake.Message):
         gid = message.guild.id
         s = await Server.find_one(Server.sid == gid)
-        # TODO add better caching
 
         if len(message.role_mentions) <= 0 and s is None:
             return
@@ -131,7 +135,6 @@ class SomeoneCog(commands.Cog):
                 and any([o for o in i.roles if o.id == a.id])
             ]
             await message.channel.send(random.choice(mems).mention)
-            # f"{random.choice(mems).mention}\n{escape_all(message.content)}"
 
 
 def setup(bot: DatBot):
