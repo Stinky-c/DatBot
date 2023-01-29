@@ -5,8 +5,10 @@ from disnake import ui
 # from disnake.ext import commands
 from disnake import ButtonStyle
 
-from helper.misc import variadic, cogs_status
-from helper.ctypes import LinkTuple
+from .misc import variadic
+from .ctypes import LinkTuple
+from .cbot import DatBot
+from .emojis import Emojis
 
 from typing import Optional
 
@@ -41,53 +43,39 @@ class LinkView(ui.View):
             )
 
 
-class CogSettingsView(ui.View):
-    def __init__(self, data: str, *, timeout: Optional[float] = 180):
+class CogSettingsView(BaseView):
+    def __init__(
+        self,
+        *,
+        message: disnake.InteractionMessage,
+        cog: str,
+        bot: DatBot,
+        timeout: Optional[float] = 180,
+    ):
         super().__init__(timeout=timeout)
-        self.name_, self.status_, self.path_ = data.split(":")
+        self.bot = bot
+        self.message = message
+        self.cog = cog
+
+    @property
+    def get_cog(self):
+        return self.bot.get_cog(self.cog)
 
     @ui.button(style=ButtonStyle.red, label="Unload Cog")
     async def unload_(self, button: Button, message: MesInter):
-        # TODO
-        ...
+        await message.response.defer()
+        self.bot.unload_extension(self.cog)
+        await message.send(f"`{self.cog}` unloaded", delete_after=4.0)
 
     @ui.button(style=ButtonStyle.green, label="Load Cog")
     async def load_(self, button: Button, message: MesInter):
-        # TODO
-        ...
+        await message.response.defer()
+        self.bot.load_extension(self.cog)
+        await message.send(f"`{self.cog}` loaded", delete_after=4.0)
 
-
-class CogSelectView(ui.View):
-    """Lists out all cogs for selection"""
-
-    def __init__(self, *, timeout: Optional[float] = 180):
-        super().__init__(timeout=timeout)
-        self.cogs = cogs_status()
-        for cog in self.cogs:
-            self.pick_cog.add_option(
-                label=f"{cog['logic_name']}:{cog['status']}",
-                value=f"{cog['logic_name']}:{cog['status']}:{cog['path']}",
-            )
-
-    @ui.string_select()
-    async def pick_cog(self, string_inter: ui.StringSelect, message: MesInter):
-        name, status, path = string_inter.values[0].split(":")
-
-        embed_dict = {
-            "fields": [
-                {"name": "Logic Name", "value": name},
-                {"name": "Path", "value": path},
-                {
-                    "name": "Status",
-                    "value": "Enabled" if status == "True" else "Disabled",
-                },
-            ]
-        }
-        await message.send(
-            embed=disnake.Embed.from_dict(embed_dict),
-            ephemeral=True,
-            view=CogSettingsView(data=string_inter.values[0]),
-        )
+    @ui.button(style=ButtonStyle.red, label="Close", emoji=Emojis.cross.value)
+    async def remove_(self, button: Button, message: MesInter):
+        await self.message.delete()
 
 
 # TODO test

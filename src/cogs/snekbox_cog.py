@@ -26,8 +26,6 @@ class SnekBoxCog(commands.Cog):
         self.log = bot.get_logger(f"cog.{self.name}")
 
     async def cog_load(self):
-        self.log.debug(f"{self.name} Loading")
-
         snekconfig: dict = self.bot.config.keys.get(self.key_loc)
         snekbox_headers = {"User-Agent": "github.com/stinky-c"}
         if auth := snekconfig.get("auth"):

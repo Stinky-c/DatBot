@@ -48,6 +48,7 @@ class LoggerConfig(BaseModel):
     logfile: Path | None = None
     format: str = "{asctime:20} | {levelname:^7} | {name:15} | {message}"
     level: LoggingLevels = LoggingLevels.INFO
+    encoding: str = "utf-8"
 
 
 class LoggingConfigMixed(BaseModel, extra=Extra.allow):

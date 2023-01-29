@@ -62,17 +62,19 @@ class YTDLSource(disnake.PCMVolumeTransformer):
         return cls(disnake.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
-class Music(commands.Cog):
+class MusicCog(commands.Cog):
     CmdInter = disnake.ApplicationCommandInteraction
+    name = "music"
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: DatBot):
         self.bot = bot
+        self.log = bot.get_logger(f"cog.{self.name}")
 
-    @commands.slash_command(name="music")
+    @commands.slash_command(name=name)
     async def music_(self, inter: CmdInter):
-        pass
+        ...
 
-    @music_.sub_command("play")
+    @music_.sub_command("join")
     async def join_(self, inter: CmdInter, *, channel: disnake.VoiceChannel):
         """Joins a voice channel
         Parameters
@@ -97,7 +99,7 @@ class Music(commands.Cog):
         await self.ensure_voice(inter)
         source = disnake.PCMVolumeTransformer(disnake.FFmpegPCMAudio(query))
         inter.guild.voice_client.play(
-            source, after=lambda e: print(f"Player error: {e}") if e else None
+            source, after=lambda e: self.log.error(f"Player error: {e}") if e else None
         )
 
         await inter.send(f"Now playing: {query}")
@@ -111,8 +113,8 @@ class Music(commands.Cog):
         """
         await self._play_url(inter, url=url, stream=False)
 
-    @music_.sub_command()
-    async def stream(self, inter: CmdInter, *, url: str):
+    @music_.sub_command("stream")
+    async def stream_(self, inter: CmdInter, *, url: str):
         """Streams from a url. useful for larger files
 
         Parameters
@@ -126,13 +128,13 @@ class Music(commands.Cog):
         await inter.response.defer()
         player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=stream)
         inter.guild.voice_client.play(
-            player, after=lambda e: print(f"Player error: {e}") if e else None
+            player, after=lambda e: self.log.error(f"Player error: {e}") if e else None
         )
 
-        await inter.send(f"Now playing: {player.title}")
+        await inter.send(f"Now playing: '{player.title}'")
 
-    @music_.sub_command()
-    async def volume(self, inter: CmdInter, volume: int = commands.Param(ge=1,le=100)):
+    @music_.sub_command("volume")
+    async def volume_(self, inter: CmdInter, volume: int = commands.Param(ge=1, le=100)):
         """Changes the player's volume
         Parameters
         ----------
@@ -145,8 +147,8 @@ class Music(commands.Cog):
         inter.guild.voice_client.source.volume = volume / 100
         await inter.send(f"Changed volume to {volume}%")
 
-    @music_.sub_command()
-    async def stop(self, inter: CmdInter):
+    @music_.sub_command("stop")
+    async def stop_(self, inter: CmdInter):
         """Stops and disconnects the bot from voice"""
         await inter.guild.voice_client.disconnect()
         await inter.send("Goodbye")
@@ -163,4 +165,4 @@ class Music(commands.Cog):
 
 
 def setup(bot: DatBot):
-    bot.add_cog(Music(bot))
+    bot.add_cog(MusicCog(bot))

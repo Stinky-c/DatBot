@@ -13,7 +13,7 @@ dev_guilds = [111111111111111111, 111111111111111111]   # Dev guilds have dev co
 
 [keys] # some default credentials for bundled services
 wavelink = { host = "lavalink", port = 2333, password = "youshallnotpass" } # wavelink cog may accept a link to enable connection to multiple nodes
-# wavelink = [{ host = "lavalink", port = 2333, password = "youshallnotpass" },{ host = "lavalink2", port = 2333, password = "youshallpass" }] 
+# wavelink = [{ host = "lavalink", port = 2333, password = "youshallnotpass" },{ host = "lavalink2", port = 2333, password = "youshallpass" }]
 snekbox = { url = "http://snekbox:8060" }
 piston = { url = "https://emkc.org/" }
 
@@ -33,4 +33,5 @@ level = 10
 [logging.disnake]
 stdout = true
 logfile = "./disnake.log" # file to log to
+encoding = "utf-8" # the default encoding method may be changed
 level = 40

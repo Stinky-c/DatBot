@@ -2,7 +2,7 @@ import disnake
 from disnake.ext import commands
 from helper import DatBot, Settings, LinkView, LinkTuple, Emojis, gen_quote, UUID
 from helper.misc import bytes2human
-from helper.views import CogSelectView
+from helper.views import CogSettingsView
 from helper.models import Quote
 import psutil
 import platform as plat
@@ -78,11 +78,15 @@ class DevCog(commands.Cog):
         await inter.send(embed=disnake.Embed.from_dict(embed_dict))
 
     @cmd.sub_command("cog")
-    async def cSettings_(self, inter: CmdInter):
+    async def cSettings_(
+        self, inter: CmdInter, cog: str = commands.Param(choices=Settings.bot.cogs)
+    ):
         """Returns a UI for changing cog settings"""
-        # TODO: cog settings
-        await inter.send(view=CogSelectView(), ephemeral=True)
-        ...
+        await inter.response.defer()
+        view = CogSettingsView(
+            bot=self.bot, message=await inter.original_response(), cog=cog
+        )
+        await inter.send(f"Configure `{cog}`", view=view, ephemeral=True)
 
     @cmd.sub_command("unload")
     async def unload_(
@@ -113,7 +117,7 @@ class DevCog(commands.Cog):
 
     @cmd.sub_command("adddev")
     async def add_dev_(self, inter: CmdInter, id: disnake.Guild):
-        """adds a new user to the dev group"""
+        """adds a new guild to the dev group"""
         if g := self.bot.get_guild(id):
             self.cmd.guild_ids.appened(id)
             await inter.send(f"Added '{g.name}' to the dev servers")

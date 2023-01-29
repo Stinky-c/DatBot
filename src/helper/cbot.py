@@ -105,7 +105,7 @@ class DatBot(commands.InteractionBot):
                     level=v.level.value,
                     format=v.format,
                     handler=logging.FileHandler(
-                        filename=v.logfile, encoding="utf-8", mode="w"
+                        filename=v.logfile, encoding=v.encoding, mode="w"
                     ),
                 )
 
@@ -172,6 +172,7 @@ class DatBot(commands.InteractionBot):
         self.closeList.append(("cog." + name, func))
 
     def get_logger(self, name: str):
+        """Returns a configured logger"""
         return logging.getLogger(name)
 
     async def on_connect(self):

@@ -29,7 +29,6 @@ class PistonCog(commands.Cog):
         self.conf: dict = bot.config.keys.get(self.key_loc)
 
     async def cog_load(self):
-        self.log.debug(f"{self.name} Loading")
         base_url = self.conf.get("url", "https://emkc.org/")
         self.client = await self.bot.make_http(self.name, base_url=base_url)
         self.runtimes = await self.runtimes_piston()
@@ -68,7 +67,7 @@ class PistonCog(commands.Cog):
                     runtimes[o] = (i.get("language"), i.get("version"))
         return runtimes
 
-    @commands.message_command("piston")
+    @commands.message_command(name="piston")
     async def eval_(self, inter: CmdInter, message: disnake.Message):
         for i in FORMATTED_CODE_REGEX.finditer(message.content):
             await inter.response.defer()
