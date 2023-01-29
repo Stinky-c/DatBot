@@ -26,7 +26,7 @@ class URL(HttpUrl):
         super().__init__(url)
 
     @commands.converter_method
-    def test(cls, inter: CmdInter, url: str):
+    def convert(cls, inter: CmdInter, url: str):
         return cls(url)
 
 

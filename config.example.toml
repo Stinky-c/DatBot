@@ -2,7 +2,7 @@
 mongo = "mongodb://mongo:27017"
 
 [bot] # bot settings
-reload = false
+reload_flag = false
 command_flag = 30
 intents_flag = 3276799
 activity_str = "The Ducks"
@@ -12,7 +12,8 @@ test_guilds = [111111111111111111, 111111111111111111]  # Test guilds register c
 dev_guilds = [111111111111111111, 111111111111111111]   # Dev guilds have dev commands enabled, and provide debugging tools
 
 [keys] # some default credentials for bundled services
-wavelink = { host = "lavalink", port = 2333, password = "youshallnotpass" }
+wavelink = { host = "lavalink", port = 2333, password = "youshallnotpass" } # wavelink cog may accept a link to enable connection to multiple nodes
+# wavelink = [{ host = "lavalink", port = 2333, password = "youshallnotpass" },{ host = "lavalink2", port = 2333, password = "youshallpass" }] 
 snekbox = { url = "http://snekbox:8060" }
 piston = { url = "https://emkc.org/" }
 
@@ -22,17 +23,14 @@ music = { name = "music", path = "./music", data = { data = "..." } }
 temp = { name = "temp", path = "./temp" }
 
 
-[logging.cogs] 
-enable = false # enable logging to files
-logfile = "./cogs.log" # file to log to
+[logging.cogs]
+stdout = false # log to stdout
 level = 10
-    # logging levels
-    # CRITICAL = 50
+    # logging levels - See src/helper/settings.py:22 for levels
     # ERROR = 40
-    # WARNING = 30
     # INFO = 20
     # DEBUG = 10
-    # NOTSET = 0
 [logging.disnake]
-enable = true
-logfile = "./disnake.log"
+stdout = true
+logfile = "./disnake.log" # file to log to
+level = 40

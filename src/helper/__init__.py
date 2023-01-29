@@ -19,6 +19,7 @@ from .emojis import Emojis
 
 # proxy
 from motor.motor_asyncio import AsyncIOMotorClient
+from disnake.utils import MISSING
 
 
 class CogLoadingFailure(Exception):

@@ -15,7 +15,7 @@ class HTTPCog(commands.Cog):
 
     async def cog_load(self):
         self.log.debug(f"{self.name} Loading")
-        self.client = self.bot.make_http(self.name)
+        self.client = await self.bot.make_http(self.name)
 
     @commands.slash_command(name=name)
     async def cmd(self, inter: CmdInter):

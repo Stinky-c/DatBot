@@ -44,9 +44,9 @@ def toml_source(settings: BaseSettings) -> dict[str, Any]:
 
 
 class LoggerConfig(BaseModel):
-    enable: bool = False
+    stdout: bool = True
     logfile: Path | None = None
-    format: str = "{asctime:20} | {levelname:^7} | {name:10} | {message}"
+    format: str = "{asctime:20} | {levelname:^7} | {name:15} | {message}"
     level: LoggingLevels = LoggingLevels.INFO
 
 
@@ -62,7 +62,8 @@ class LoggingConfigMixed(BaseModel, extra=Extra.allow):
 
 class LoggingConfig(BaseModel):
     disnake: LoggerConfig
-    cogs: LoggerConfig
+    cog: LoggerConfig
+    bot: LoggerConfig
 
 
 class Connections(BaseModel):

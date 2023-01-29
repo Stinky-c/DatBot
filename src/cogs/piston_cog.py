@@ -31,7 +31,7 @@ class PistonCog(commands.Cog):
     async def cog_load(self):
         self.log.debug(f"{self.name} Loading")
         base_url = self.conf.get("url", "https://emkc.org/")
-        self.client = self.bot.make_http(self.name, base_url=base_url)
+        self.client = await self.bot.make_http(self.name, base_url=base_url)
         self.runtimes = await self.runtimes_piston()
 
     async def eval_piston(

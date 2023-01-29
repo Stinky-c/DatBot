@@ -19,7 +19,7 @@ class DevCog(commands.Cog):
 
     async def cog_load(self) -> None:
         # self.log.debug(f"{self.name} Loading")
-        self.httpclient = self.bot.make_http(self.name)
+        self.httpclient = await self.bot.make_http(self.name)
 
     @commands.is_owner()
     @commands.slash_command(name="dev", guild_ids=Settings.bot.dev_guilds)

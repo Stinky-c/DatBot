@@ -33,7 +33,7 @@ class SnekBoxCog(commands.Cog):
         if auth := snekconfig.get("auth"):
             snekbox_headers["Authorization"] = auth
 
-        self.client = self.bot.make_http(
+        self.client = await self.bot.make_http(
             self.name, base_url=snekconfig.get("url"), headers=snekbox_headers
         )
 

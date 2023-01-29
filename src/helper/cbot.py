@@ -10,13 +10,15 @@ from helper.models import init_models
 from helper.settings import BotSettings, Settings, LoggingLevels, LoggerConfig
 import logging
 import sys
-from os import PathLike
+
+MISSING = disnake.utils.MISSING
 
 
 class DatBot(commands.InteractionBot):
     config: BotSettings
     _db_conn: AsyncIOMotorClient
     log: logging.Logger
+    clog: logging.Logger
 
     def __init__(
         self,
@@ -86,28 +88,29 @@ class DatBot(commands.InteractionBot):
         self.config = bot_config
         self._db_conn = AsyncIOMotorClient(self.config.connections.mongo)
 
+        # set up logging
+        # TODO add options to configure other handlers
         for k, v in self.config.logging:
-            v: LoggerConfig  # TODO ?
-            if v.enable:
-                self.configure_logger(k, v.logfile, v.level.value, v.format)
+            v: LoggerConfig
+            if v.stdout:
+                self.configure_logger(
+                    name=k,
+                    level=v.level,
+                    format=v.format,
+                    handler=logging.StreamHandler(sys.stdout),
+                )
             else:
-                self.configure_logger_stream(k, v.level, v.format)
-        self.log = self.get_logger("cogs")
+                self.configure_logger(
+                    name=k,
+                    level=v.level.value,
+                    format=v.format,
+                    handler=logging.FileHandler(
+                        filename=v.logfile, encoding="utf-8", mode="w"
+                    ),
+                )
 
-    async def start(
-        self,
-        token: str,
-        *,
-        reconnect: bool = True,
-        ignore_session_start_limit: bool = False,
-    ) -> None:
-        if self.reload:
-            self.loop.create_task(self._watchdog())  # type: ignore
-        return await super().start(
-            token=token,
-            reconnect=reconnect,
-            ignore_session_start_limit=ignore_session_start_limit,
-        )
+        self.log = self.get_logger("bot")
+        self.clog = self.get_logger("cog")
 
     @classmethod
     def from_settings(cls, settings: BotSettings = Settings):
@@ -127,49 +130,46 @@ class DatBot(commands.InteractionBot):
             bot_config=settings,
         )
 
-    log_format = "%(asctime)s:%(levelname)s:%(name)s: %(message)s"
-
-    def _configure_logger(self, name: str, level: LoggingLevels = LoggingLevels.INFO):
-        logger = logging.getLogger(name)
-        logger.setLevel(level)
-        return logger
-
     def configure_logger(
         self,
         name: str,
-        fp: PathLike,
+        format: str,
+        handler: logging.Handler,
         level: LoggingLevels = LoggingLevels.ERROR,
-        format: str = log_format,
     ):
-        logger = self._configure_logger(name, level)
-        handler = logging.FileHandler(filename=fp, encoding="utf-8", mode="w")
+        logger = logging.getLogger(name)
+        logger.setLevel(level)
         handler.setFormatter(logging.Formatter(format, style="{"))
         logger.addHandler(handler)
         return logger
 
-    def configure_logger_stream(
+    async def start(
         self,
-        name: str,
-        level: LoggingLevels = LoggingLevels.DEBUG,
-        format: str = log_format,
-    ):
-        logger = self._configure_logger(name, level)
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(logging.Formatter(format, style="{"))
-        logger.addHandler(handler)
-        return logger
+        token: str,
+        *,
+        reconnect: bool = True,
+        ignore_session_start_limit: bool = False,
+    ) -> None:
+        if self.reload:
+            self.log.info("Reload enabled")
+            self.loop.create_task(self._watchdog())
+        return await super().start(
+            token=token,
+            reconnect=reconnect,
+            ignore_session_start_limit=ignore_session_start_limit,
+        )
 
-    def make_http(self, name: str, *args, **kwargs) -> aiohttp.ClientSession:
+    async def make_http(self, name: str, *args, **kwargs) -> aiohttp.ClientSession:
         """Make a aiohttp session and register the closing functions"""
         sess = aiohttp.ClientSession(*args, **kwargs)
-        self.closeList.append(("cogs." + name, sess.close()))
+        self.closeList.append(("cog." + name, sess.close()))
         return sess
 
     def register_aclose(self, name: str, func: Coroutine):
         """Appends a close method the close list"""
         if not isinstance(func, Coroutine):
             raise TypeError("Not coroutine")
-        self.closeList.append(("cogs." + name, func))
+        self.closeList.append(("cog." + name, func))
 
     def get_logger(self, name: str):
         return logging.getLogger(name)
