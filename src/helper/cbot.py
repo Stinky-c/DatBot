@@ -15,7 +15,6 @@ MISSING = disnake.utils.MISSING
 
 
 class DatBot(commands.InteractionBot):
-    config: BotSettings
     _db_conn: AsyncIOMotorClient
     log: logging.Logger
     clog: logging.Logger

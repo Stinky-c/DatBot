@@ -8,6 +8,11 @@ Alpha version.
 
 More work features and functions coming later.
 
+## TODO
+
+- Change to use a CLI
+- A better starting method
+
 ## Quick Start
 
 1. Install [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/)

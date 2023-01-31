@@ -1,6 +1,6 @@
 import disnake
 from disnake.ext import commands
-from helper import DatBot, CogLoadingFailure
+from helper import DatBot, CogLoadingFailure, Settings
 
 
 class ExampleCog(commands.Cog):
@@ -34,7 +34,7 @@ class ExampleCog(commands.Cog):
 
 
 def setup(bot: DatBot):
-    if ExampleCog.key_enabled or not bot.config.keys.get(ExampleCog.key_loc):
+    if ExampleCog.key_enabled or not Settings.keys.get(ExampleCog.key_loc):
         raise CogLoadingFailure(
             f"Missing `{ExampleCog.key_loc}` api key. Disable or provide key"
         )

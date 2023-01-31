@@ -4,6 +4,7 @@ import random
 
 from helper import DatBot
 from helper.models import Server, SomeoneRoles
+from functools import partial
 
 
 # not very happy about this
@@ -87,6 +88,7 @@ class SomeoneCog(commands.Cog):
         """
         someone = SomeoneRoles(mention=listen_role.id, subscriber=subscribe_role.id)
         s.someone = someone
+        await inter.response.defer()
         await s.save()
         return await inter.send(
             f"Setup complete\nListen role: {someone.mention}\nSubscriber Role: {someone.subscriber}"
@@ -95,7 +97,7 @@ class SomeoneCog(commands.Cog):
     @cmd.sub_command("add")
     async def join_(self, inter: CmdInter, s: SomeoneRoles):
         """Joins the guilds someone subscriber list"""
-        role = inter.guild.get_role(s.mention)
+        role = inter.guild.get_role(s.subscriber)
 
         await inter.author.add_roles(
             role, reason=f"User joined the `{role.name}` mention list"
@@ -107,13 +109,27 @@ class SomeoneCog(commands.Cog):
     @cmd.sub_command("leave")
     async def leave_(self, inter: CmdInter, s: SomeoneRoles):
         """Leaves the guilds Someone subscriber list"""
-        role = inter.guild.get_role(s.mention)
+        role = inter.guild.get_role(s.subscriber)
 
         await inter.author.remove_roles(
             role, reason=f"User left the `{role.name}` mention list"
         )
         await inter.response.send_message(
             f"You have unsubscribed to the `{role.name}` mention list"
+        )
+
+    @staticmethod
+    def _predicate(member: disnake.Member, role: disnake.Role, author_id: int):
+        return (
+            False
+            if member.id == author_id
+            else any(
+                [
+                    o
+                    for o in member.roles
+                    if o.id == role.id and not member.id == author_id
+                ]
+            )
         )
 
     @commands.Cog.listener("on_message")
@@ -127,14 +143,12 @@ class SomeoneCog(commands.Cog):
         someone = s.someone
         if any([i for i in message.role_mentions if someone.mention == i.id]):
             a = await self.fetch_role(gid, someone.subscriber)
-            b = await message.guild.fetch_members().flatten()
-            mems = [
-                i
-                for i in b
-                if i.id != message.author.id
-                and any([o for o in i.roles if o.id == a.id])
-            ]
-            await message.channel.send(random.choice(mems).mention)
+            b = (
+                await message.guild.fetch_members()
+                .filter(partial(self._predicate, role=a, author_id=message.author.id))
+                .flatten()
+            )
+            await message.channel.send(random.choice(b).mention)
 
 
 def setup(bot: DatBot):

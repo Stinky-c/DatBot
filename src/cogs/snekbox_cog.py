@@ -1,6 +1,6 @@
 import disnake
 from disnake.ext import commands
-from helper import DatBot, CogLoadingFailure
+from helper import DatBot, CogLoadingFailure, Settings
 import re
 
 
@@ -26,7 +26,7 @@ class SnekBoxCog(commands.Cog):
         self.log = bot.get_logger(f"cog.{self.name}")
 
     async def cog_load(self):
-        snekconfig: dict = self.bot.config.keys.get(self.key_loc)
+        snekconfig: dict = Settings.keys.get(self.key_loc)
         snekbox_headers = {"User-Agent": "github.com/stinky-c"}
         if auth := snekconfig.get("auth"):
             snekbox_headers["Authorization"] = auth
@@ -68,7 +68,7 @@ class SnekBoxCog(commands.Cog):
 
 
 def setup(bot: DatBot):
-    if SnekBoxCog.key_enabled and not bot.config.keys.get(SnekBoxCog.key_loc):
+    if SnekBoxCog.key_enabled and not Settings.keys.get(SnekBoxCog.key_loc):
         raise CogLoadingFailure(
             f"Missing `{SnekBoxCog.key_loc}` api key. Disable or provide key"
         )

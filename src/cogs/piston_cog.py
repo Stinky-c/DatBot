@@ -1,6 +1,6 @@
 import disnake
 from disnake.ext import commands
-from helper import DatBot, CogLoadingFailure
+from helper import DatBot, CogLoadingFailure,Settings
 from helper.models import PistonEvalResponse
 import re
 
@@ -26,7 +26,7 @@ class PistonCog(commands.Cog):
     def __init__(self, bot: DatBot):
         self.bot = bot
         self.log = bot.get_logger(f"cog.{self.name}")
-        self.conf: dict = bot.config.keys.get(self.key_loc)
+        self.conf: dict = Settings.keys.get(self.key_loc)
 
     async def cog_load(self):
         base_url = self.conf.get("url", "https://emkc.org/")
@@ -78,7 +78,7 @@ class PistonCog(commands.Cog):
 
 
 def setup(bot: DatBot):
-    if PistonCog.key_enabled and not bot.config.keys.get(PistonCog.key_loc):
+    if PistonCog.key_enabled and not Settings.keys.get(PistonCog.key_loc):
         raise CogLoadingFailure(
             f"Missing `{PistonCog.key_loc}` api key. Disable or provide key"
         )

@@ -2,7 +2,7 @@ import disnake
 from disnake.ext import commands
 import wavelink
 from wavelink.utils import MISSING
-from helper import DatBot, CogLoadingFailure
+from helper import DatBot, CogLoadingFailure, Settings
 
 
 class LavaLinkCog(commands.Cog):
@@ -20,8 +20,8 @@ class LavaLinkCog(commands.Cog):
     async def connect_node(self):
         """Connect to our Lavalink nodes."""
 
-        conf = self.bot.config.keys.get(self.key_loc)
-        if isinstance(conf, list):  # TODO check multi node support
+        conf = Settings.keys.get(self.key_loc)
+        if isinstance(conf, list):
             for i in conf:
                 await self.nodes.create_node(
                     bot=self.bot,
@@ -120,6 +120,6 @@ class LavaLinkCog(commands.Cog):
 
 
 def setup(bot: DatBot):
-    if not bot.config.keys.get(LavaLinkCog.key_loc):
+    if not Settings.keys.get(LavaLinkCog.key_loc):
         raise CogLoadingFailure(f"Missing `{LavaLinkCog.name}` configuration.")
     bot.add_cog(LavaLinkCog(bot))
