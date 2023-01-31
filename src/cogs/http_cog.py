@@ -1,7 +1,7 @@
 import disnake
 from disnake.ext import commands
 from helper import DatBot
-from helper import HTTP_CODES, URL
+from helper import HTTP_CODES
 from urllib.parse import unquote
 
 
@@ -48,7 +48,7 @@ class HTTPCog(commands.Cog):
 
     @commands.is_owner()
     @cmd.sub_command(name="get")
-    async def get_(self, inter: CmdInter, url: URL):
+    async def get_(self, inter: CmdInter, url: str):
         """using a client, GET's a url
         Parameters
         ----------

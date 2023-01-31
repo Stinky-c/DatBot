@@ -18,7 +18,6 @@ class DevCog(commands.Cog):
         self.log = bot.get_logger(f"cogs.{self.name}")
 
     async def cog_load(self) -> None:
-        # self.log.debug(f"{self.name} Loading")
         self.httpclient = await self.bot.make_http(self.name)
 
     @commands.is_owner()

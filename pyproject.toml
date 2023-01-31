@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datbot"
-version = "0.1.1"
+version = "0.1.2"
 description = "Another generic multi purpose discord bot"
 authors = ["Stinky-c <60587749+Stinky-c@users.noreply.github.com>"]
 
@@ -8,7 +8,7 @@ authors = ["Stinky-c <60587749+Stinky-c@users.noreply.github.com>"]
 python = "^3.10"
 disnake = "^2.7.0"
 python-dotenv = "^0.21.0"
-qrcode = {extras = ["pil"], version = "^7.3.1"}
+qrcode = { extras = ["pil"], version = "^7.3.1" }
 toml = "^0.10.2"
 yt-dlp = "^2022.10.4"
 pynacl = "^1.5.0"
@@ -26,17 +26,12 @@ poethepoet = "^0.18.1"
 
 
 [tool.poe.tasks]
-build = ""
 dev-run = "docker-compose -f docker-compose-dev.yaml up --build"
 
 [tool.poe.tasks.schema]
 script = "src.helper.settings:schema_json"
 print_result = true
 
-
-[tool.bandit]
-exclude_dirs = ["tests", ".venv"]
-skips = ["B311", "B101"]
 
 [tool.ruff]
 extend-ignore = ["E501"]

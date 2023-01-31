@@ -1,5 +1,6 @@
 from asyncio import AbstractEventLoop
 from typing import Optional, Sequence, Coroutine
+from types import SimpleNamespace
 
 import aiohttp
 import disnake
@@ -86,6 +87,7 @@ class DatBot(commands.InteractionBot):
 
         self.config = bot_config
         self._db_conn = AsyncIOMotorClient(self.config.connections.mongo)
+        self.started = False
 
         # set up logging
         # TODO add options to configure other handlers
@@ -160,7 +162,29 @@ class DatBot(commands.InteractionBot):
 
     async def make_http(self, name: str, *args, **kwargs) -> aiohttp.ClientSession:
         """Make a aiohttp session and register the closing functions"""
-        sess = aiohttp.ClientSession(*args, **kwargs)
+        logger = self.get_logger(f"cog.{name}.http")
+
+        async def on_request_end(
+            sess: aiohttp.ClientSession,
+            ctx: SimpleNamespace,
+            end: aiohttp.TraceRequestEndParams,
+        ):
+            """aiohttp client logging"""
+            res = end.response
+            logger.debug(
+                f"[{res.status!s} {res.reason!s}] {res.method.upper()!s} {end.url!s} ({res.content_type!s})"
+            )
+
+        trace_config = aiohttp.TraceConfig()
+        trace_config.on_request_end.append(on_request_end)
+
+        sess = aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(resolver=aiohttp.AsyncResolver()),
+            trace_configs=[trace_config],
+            *args,
+            **kwargs,
+        )
+
         self.closeList.append(("cog." + name, sess.close()))
         return sess
 
@@ -176,10 +200,11 @@ class DatBot(commands.InteractionBot):
 
     async def on_connect(self):
         self.log.info("Connecting...")
-        self.log.debug("Loading beanie models")
-        await init_models(self._db_conn)
 
     async def on_ready(self):
+        if not self.started:
+            self.log.debug("Loading beanie models")
+            await init_models(self._db_conn)
         self.log.info(f"{self.user.display_name}#{self.user.discriminator} is ready!")
 
     async def close(self) -> None:
