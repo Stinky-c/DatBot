@@ -71,7 +71,7 @@ class Connections(BaseModel):
     mongo: MongoDsn
 
 
-def cogs_factory(pattern:str = "*_cog.py"):
+def cogs_factory(pattern: str = "*_cog.py"):
     # I don't know how I feel about this
     return [
         i.replace("\\", ".").replace("/", ".").strip(".py")
@@ -90,11 +90,11 @@ class BotConfig(BaseModel):
     owner_ids: Optional[set[int]]
     test_guilds: Optional[List[int]]
     dev_guilds: Optional[List[int]]
-    cogs: List[str] = Field( # TODO find way to exlclude from schema
+    cogs: List[str] = Field(  # TODO find way to exlclude from schema
         default_factory=lambda: cogs_factory("*_cog.py"),
         exclude=True,
     )
-    disabled_cogs: List[str] = Field( # TODO find way to exlclude from schema
+    disabled_cogs: List[str] = Field(  # TODO find way to exlclude from schema
         default_factory=lambda: cogs_factory("*_disabled.py"),
         exclude=True,
     )
@@ -117,6 +117,10 @@ class Directory(BaseModel):
     data: Optional[dict[str, str]]
 
 
+class Patches(BaseModel):
+    wavelink: bool = True
+
+
 class BotSettings(BaseSettings):
     """All bot settings"""
 
@@ -135,6 +139,9 @@ class BotSettings(BaseSettings):
 
     # directories
     dir: DefaultDict[str, Directory]
+
+    # toggle patches
+    patches: Patches = Patches()
 
     class Config:
         env_file = ".env"
@@ -165,6 +172,7 @@ class BotSettings(BaseSettings):
 
 
 Settings = BotSettings()  # type: ignore
+
 
 def schema_json():
     return Settings.schema_json()

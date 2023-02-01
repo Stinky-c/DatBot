@@ -2,12 +2,13 @@ import disnake
 from disnake.ext import commands
 import wavelink
 from wavelink.utils import MISSING
+from wavelink import Player
 from helper import DatBot, CogLoadingFailure, Settings
+from helper.patch import patch_wavelink_loggers
 
 
 class LavaLinkCog(commands.Cog):
     CmdInter = disnake.ApplicationCommandInteraction
-    Player = wavelink.Player
     name = "wavelink"
     key_enabled = True
     key_loc = "wavelink"
@@ -15,6 +16,9 @@ class LavaLinkCog(commands.Cog):
     def __init__(self, bot: DatBot):
         self.bot = bot
         self.log = bot.get_logger(f"cog.{self.name}")
+        if Settings.patches.wavelink:
+            patch_wavelink_loggers(bot.get_logger, f"cog.{self.name}.wavelink.")
+
         self.nodes = wavelink.NodePool()
 
     async def connect_node(self):
@@ -45,9 +49,9 @@ class LavaLinkCog(commands.Cog):
 
     @commands.register_injection
     async def get_player(self, inter: CmdInter) -> Player:
-        vc: wavelink.Player
+        vc: Player
         if not inter.guild.voice_client:
-            vc = await inter.author.voice.channel.connect(cls=wavelink.Player)
+            vc = await inter.author.voice.channel.connect(cls=Player)
             self.log.info(f"creating voice connection: {inter.guild_id}")
         else:
             vc = inter.guild.voice_client
@@ -82,7 +86,7 @@ class LavaLinkCog(commands.Cog):
             "description": toplay.author,
             "color": disnake.Color.random(),
             "image": {"url": toplay.thumbnail},
-            "timestamp": disnake.utils.utcnow(),
+            "timestamp": disnake.utils.utcnow().isoformat(),
         }
         await inter.send(embed=disnake.Embed.from_dict(embed_dict))
 

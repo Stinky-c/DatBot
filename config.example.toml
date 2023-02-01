@@ -22,6 +22,8 @@ piston = { url = "https://emkc.org/" }
 music = { name = "music", path = "./music", data = { data = "..." } }
 temp = { name = "temp", path = "./temp" }
 
+[patches] # Patches toggle various patches typically changing loggers
+wavelink = false # patches loggers in wavelink to enable logging
 
 [logging.cogs]
 stdout = false # log to stdout

@@ -1,6 +1,5 @@
 import asyncio
 
-
 from helper import DatBot, Settings
 
 
@@ -8,8 +7,8 @@ async def main():
 
     bot = DatBot.from_settings(Settings)
     for cog in Settings.bot.cogs:
-        bot.load_extension(cog)
         try:
+            bot.load_extension(cog)
             bot.log.info(f"{cog} loaded")
         except Exception:
             bot.log.error(f"Loading '{cog}' Failed")
