@@ -13,7 +13,6 @@ from pydantic import (
     MongoDsn,
     SecretStr,
     Extra,
-    root_validator,
 )
 from pydantic.json import pydantic_encoder
 from os import environ
@@ -49,16 +48,6 @@ class LoggerConfig(BaseModel):
     format: str = "{asctime:20} | {levelname:^7} | {name:15} | {message}"
     level: LoggingLevels = LoggingLevels.INFO
     encoding: str = "utf-8"
-
-
-class LoggingConfigMixed(BaseModel, extra=Extra.allow):
-    @root_validator(pre=True)
-    def build_extra(cls, values: dict[str, Any]) -> dict[str, Any]:
-        for k, v in values.items():
-            if not isinstance(v, dict):
-                continue
-            values[k] = LoggerConfig.parse_obj(v)
-        return values
 
 
 class LoggingConfig(BaseModel):
@@ -118,7 +107,7 @@ class Directory(BaseModel):
 
 
 class Patches(BaseModel):
-    wavelink: bool = True
+    wavelink: bool = False
 
 
 class BotSettings(BaseSettings):
