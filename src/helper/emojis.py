@@ -6,6 +6,7 @@ class Emojis(Enum):
 
     thumbs_up = "👍"
     thumbs_down = "👎"
+    wave = "👋"
     skull = "💀"
     checkmark = "✅"
     cross = "❌"

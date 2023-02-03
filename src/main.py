@@ -1,6 +1,6 @@
 import asyncio
 
-from helper import DatBot, Settings
+from helper import DatBot, Settings, CogLoadingFailure
 
 
 async def main():
@@ -10,8 +10,10 @@ async def main():
         try:
             bot.load_extension(cog)
             bot.log.info(f"{cog} loaded")
-        except Exception:
-            bot.log.error(f"Loading '{cog}' Failed")
+        except CogLoadingFailure as e:
+            bot.log.error(f"'{cog}' failed: {e}")
+        except Exception as e:
+            bot.log.error(f"Loading '{cog}' Failed : {e}")
 
     await bot.start(Settings.token.get_secret_value())
 
