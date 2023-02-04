@@ -1,16 +1,14 @@
 import io
-import disnake
-from disnake.ext import commands
-
-from data.qrcode import moddrawer, emebedHelp, errorCorrectionLevel
-from helper import DatBot
 from typing import Tuple
 
+import disnake
 import qrcode as qrc
-from qrcode.image.styledpil import StyledPilImage
-from qrcode.image.svg import SvgFillImage
+from data.qrcode import emebedHelp, errorCorrectionLevel, moddrawer
+from disnake.ext import commands
+from helper import DatBot
 from qrcode.constants import ERROR_CORRECT_H
-from qrcode.image.styledpil import SolidFillColorMask
+from qrcode.image.styledpil import SolidFillColorMask, StyledPilImage
+from qrcode.image.svg import SvgFillImage
 
 # TODO:
 # doc strings...

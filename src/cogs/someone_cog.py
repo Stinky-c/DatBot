@@ -1,10 +1,10 @@
+import random
+from functools import partial
+
 import disnake
 from disnake.ext import commands
-import random
-
 from helper import DatBot
 from helper.models import Server, SomeoneRoles
-from functools import partial
 
 
 # not very happy about this

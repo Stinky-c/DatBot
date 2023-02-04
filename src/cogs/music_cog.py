@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 import disnake
 import yt_dlp as youtube_dl  # type: ignore
 from disnake.ext import commands
-from helper import DatBot, build_path, Settings
+from helper import DatBot, Settings, build_path
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ""
@@ -134,7 +134,9 @@ class MusicCog(commands.Cog):
         await inter.send(f"Now playing: '{player.title}'")
 
     @music_.sub_command("volume")
-    async def volume_(self, inter: CmdInter, volume: int = commands.Param(ge=1, le=100)):
+    async def volume_(
+        self, inter: CmdInter, volume: int = commands.Param(ge=1, le=100)
+    ):
         """Changes the player's volume
         Parameters
         ----------

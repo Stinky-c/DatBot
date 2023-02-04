@@ -1,6 +1,6 @@
 import disnake
 from disnake.ext import commands
-from helper import DatBot, LinkView, LinkTuple
+from helper import DatBot, LinkTuple, LinkView
 
 
 class UserCog(commands.Cog):
@@ -23,7 +23,7 @@ class UserCog(commands.Cog):
             "color": spot.color.value,
             "image": {"url": spot.album_cover_url},
         }
-        
+
         await inter.send(
             embed=disnake.Embed.from_dict(embed_dict),
             view=LinkView(LinkTuple("Track Link", spot.track_url)),

@@ -1,8 +1,9 @@
 from typing import NamedTuple
-from pydantic import HttpUrl
+from uuid import UUID as UUID_
+
 import disnake
 from disnake.ext import commands
-from uuid import UUID as UUID_
+from pydantic import HttpUrl
 
 CmdInter = disnake.CommandInteraction
 

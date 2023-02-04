@@ -1,30 +1,25 @@
-from .views import LinkView
-from .misc import (
-    gen_quote,
-    build_path,
-    bytes2human,
-    format_time,
-    variadic,
-    escape_all,
-    HTTP_STATUS,
-    HTTP_CODES,
-    jdumps,
-)
-from .cbot import DatBot
-from .ctypes import LinkTuple, URL, UUID
-
-# from .cache import MongoConnection
-from .models import Server, User, Quote, init_models
-from .settings import Settings
-from .emojis import Emojis
+from disnake.utils import MISSING
 
 # proxy
 from motor.motor_asyncio import AsyncIOMotorClient
-from disnake.utils import MISSING
 
-
-class CogLoadingFailure(Exception):
-    """For when you just refuse to load the cog"""
-
+from .cbot import DatBot
+from .ctypes import URL, UUID, LinkTuple
+from .emojis import Emojis
+from .errors import CogLoadingFailure
+from .misc import (
+    HTTP_CODES,
+    HTTP_STATUS,
+    build_path,
+    bytes2human,
+    escape_all,
+    format_time,
+    gen_quote,
+    jdumps,
+    variadic,
+)
+from .models import Quote, Server, User, init_models
+from .settings import Settings
+from .views import LinkView
 
 __all__ = ("DatBot",)

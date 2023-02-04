@@ -1,7 +1,8 @@
+import re
+
 import disnake
 from disnake.ext import commands
-from helper import DatBot, CogLoadingFailure, Settings
-import re
+from helper import CogLoadingFailure, DatBot, Settings
 
 
 class SnekBoxCog(commands.Cog):

@@ -1,6 +1,9 @@
+import logging
+import signal
+import sys
 from asyncio import AbstractEventLoop
-from typing import Optional, Sequence, Coroutine
 from types import SimpleNamespace
+from typing import Coroutine, Optional, Sequence
 
 import aiohttp
 import disnake
@@ -8,10 +11,7 @@ from disnake.ext import commands
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from helper.models import init_models
-from helper.settings import BotSettings, Settings, LoggingLevels, LoggerConfig
-import logging
-import sys
-import signal
+from helper.settings import BotSettings, LoggerConfig, LoggingLevels, Settings
 
 MISSING = disnake.utils.MISSING
 

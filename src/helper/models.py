@@ -1,11 +1,14 @@
-from uuid import uuid4
-from .ctypes import UUID
-from beanie import Document, Indexed, init_beanie
-from pydantic import BaseModel, Field
-from typing import Optional
-import disnake
-from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime
+from typing import Optional
+from uuid import uuid4
+
+import disnake
+from beanie import Document, Indexed, init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import BaseModel, Field
+
+from .ctypes import UUID
+
 
 # Discord
 class User(Document):

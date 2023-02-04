@@ -1,10 +1,11 @@
 import disnake
 from disnake.ext import commands
-from helper import DatBot, CogLoadingFailure, Settings
+from helper import CogLoadingFailure, DatBot, Settings
 
 
 class ExampleCog(commands.Cog):
     """This is the base cog for creating a new cog"""
+
     CmdInter = disnake.ApplicationCommandInteraction
     name = "example"
     key_enabled = False
@@ -24,12 +25,11 @@ class ExampleCog(commands.Cog):
         self.log.debug(f"{inter.author.name} @ {inter.guild.name}")
 
     @cmd.sub_command(name="ping")
-    async def ping(self, inter: CmdInter,abc:str):
-        """ Placeholder
+    async def ping(self, inter: CmdInter, abc: str):
+        """Placeholder
         Parameters
         ----------
-        abc: placeholder
-"""
+        abc: placeholder"""
         await inter.response.send_message(f"Pong! {round(self.bot.latency * 1000)}ms")
 
 

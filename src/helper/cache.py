@@ -1,10 +1,11 @@
-from motor.motor_asyncio import AsyncIOMotorClient
 import asyncio
 
+from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
 from redis.asyncio import Redis
 
-from beanie import init_beanie
-from helper.models import DocumentModels, User, Server
+from helper.models import DocumentModels, Server, User
+
 
 # FIXME Kinda pointless
 class MongoConnection:

@@ -1,17 +1,15 @@
 # from __future__ import annotations
-import disnake
-from disnake import ui
-
-# from disnake.ext import commands
-from disnake import ButtonStyle
-
-from .misc import variadic
-from .ctypes import LinkTuple
-from .cbot import DatBot
-from .emojis import Emojis
-
 from typing import Optional
 
+import disnake
+
+# from disnake.ext import commands
+from disnake import ButtonStyle, ui
+
+from .cbot import DatBot
+from .ctypes import LinkTuple
+from .emojis import Emojis
+from .misc import variadic
 
 Button = disnake.ui.Button
 MesInter = disnake.MessageInteraction
