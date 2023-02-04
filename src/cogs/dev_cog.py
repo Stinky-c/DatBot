@@ -6,6 +6,8 @@ from helper.views import CogSettingsView
 from helper.models import Quote
 import psutil
 import platform as plat
+import collections
+import json
 
 
 class DevCog(commands.Cog):
@@ -209,7 +211,16 @@ class DevCog(commands.Cog):
         newf = await file.to_file(filename=fn)
         await inter.send("Transformed!", file=newf)
 
-    @cmd.sub_command_group(name="quote")
+    @cmd.sub_command("cached")
+    async def cached_(self, inter: CmdInter):
+        """Returns all cached messages"""
+        await inter.response.defer()
+        count = collections.defaultdict(lambda: 0)
+        for mess in self.bot.cached_messages:
+            count[mess.author.id] += 1
+        await inter.send(f"```json\n{json.dumps(count,indent=4)}```")
+
+    @cmd.sub_command_group("quote")
     async def quote_(self, inter: CmdInter):
         ...
 

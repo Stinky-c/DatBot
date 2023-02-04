@@ -1493,9 +1493,9 @@ aiohttp = ">=3.6.0,<3.9.0"
 
 [package.source]
 type = "git"
-url = "https://github.com/helish88/Wavelink"
+url = "https://github.com/Stinky-c/Wavelink.git"
 reference = "HEAD"
-resolved_reference = "3a5d1b65ee82007b68dded299c5d41eaa5f48dbb"
+resolved_reference = "3942206727242601fbb4a7d7ebd3b84aafa1eba9"
 
 [[package]]
 name = "websockets"
@@ -1687,4 +1687,4 @@ websockets = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5de56f3a897c912c955ed4d20e148a0dd5147eef202246ad7eda855d6d0538ba"
+content-hash = "1ee2f02d1a3dc21a39c123a3901d7f3ce81547317f2909308b43c5100079ba77"

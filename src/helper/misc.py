@@ -6,6 +6,7 @@ from typing import Any
 import disnake
 from .models import Quote
 from enum import IntEnum, EnumMeta
+import json
 
 
 def cogs_status() -> list[dict[str, Path | str | bool]]:
@@ -52,11 +53,6 @@ def build_path(*path: str, t: bool = False) -> str | Path:
     return str(p) if not t else p
 
 
-# _path = build_path("data\quotes.txt", t=True)
-# with _path.open(encoding="utf-8") as f:
-#     _quotes = f.readlines()
-
-
 def format_time(time: int | float) -> str:
     """Formats a time, uses '%Y-%m-%d %H:%M:%S'"""
     return disnake.utils.utcnow().strftime("%Y-%m-%d %H:%M:%S")
@@ -85,6 +81,12 @@ def escape_all(input: str) -> str:
     s1 = disnake.utils.resolve_template(input)
     s2 = disnake.utils.remove_markdown(s1)
     return s2
+
+
+def jdumps(obj: Any) -> str:
+    """Dumps object to a discord code block"""
+    dumped = f"```json\n{json.dumps(obj,indent=4)}\n```"
+    return dumped if len(dumped) <= 2000 else "Payload too large"
 
 
 class ContainsEnumMeta(EnumMeta):
@@ -163,5 +165,6 @@ class HTTP_STATUS(IntEnum, metaclass=ContainsEnumMeta):
     origin_is_unreachable = 523
     ssl_handshake_failed = 525
     network_connect_timeout_error = 599
+
 
 HTTP_CODES = list(HTTP_STATUS._value2member_map_.keys())

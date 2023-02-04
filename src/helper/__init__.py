@@ -7,7 +7,8 @@ from .misc import (
     variadic,
     escape_all,
     HTTP_STATUS,
-    HTTP_CODES
+    HTTP_CODES,
+    jdumps,
 )
 from .cbot import DatBot
 from .ctypes import LinkTuple, URL, UUID

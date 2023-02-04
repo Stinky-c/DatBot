@@ -11,6 +11,7 @@ from helper.models import init_models
 from helper.settings import BotSettings, Settings, LoggingLevels, LoggerConfig
 import logging
 import sys
+import signal
 
 MISSING = disnake.utils.MISSING
 
@@ -154,6 +155,18 @@ class DatBot(commands.InteractionBot):
         if self.reload:
             self.log.info("Reload enabled")
             self.loop.create_task(self._watchdog())
+
+        # register close task for signal interupts
+        try:
+
+            def close():
+                self.loop.create_task(self.close())
+
+            self.loop.add_signal_handler(signal.SIGINT, close)
+            self.loop.add_signal_handler(signal.SIGTERM, close)
+        except NotImplementedError:
+            pass
+
         return await super().start(
             token=token,
             reconnect=reconnect,
