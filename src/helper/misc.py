@@ -91,6 +91,11 @@ def jdumps(obj: Any) -> str:
     return dumped if len(dumped) <= 2000 else "Payload too large"
 
 
+def cblock(obj: Any, key: str = ""):
+    block = f"```{key}\n{obj}\n```"
+    return block if len(block) <= 200 else "Payload too large"
+
+
 class ContainsEnumMeta(EnumMeta):
     def __contains__(cls, item):
         return item in [v.value for v in cls.values()]

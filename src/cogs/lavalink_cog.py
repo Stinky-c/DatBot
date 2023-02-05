@@ -1,7 +1,7 @@
 import disnake
 import wavelink
 from disnake.ext import commands
-from helper import CogLoadingFailure, DatBot, Emojis, Settings, jdumps
+from helper import CogLoadingFailure, DatBot, Emojis, Settings, jdumps, cblock
 from helper.patch import patch_wavelink_loggers
 from wavelink import Player
 from wavelink.utils import MISSING
@@ -9,6 +9,8 @@ from wavelink.utils import MISSING
 
 # TODO: update to use REST based API
 # TODO: add playlist
+# TODO: add timeout feature
+# TODO: add a youtube only queue
 class LavaLinkCog(commands.Cog):
     CmdInter = disnake.ApplicationCommandInteraction
     name = "wavelink"
@@ -23,7 +25,6 @@ class LavaLinkCog(commands.Cog):
         self._player_channels = {}
         if Settings.patches.wavelink:
             patch_wavelink_loggers(bot.get_logger, f"cog.{self.name}.wavelink.")
-        wavelink.YouTubeTrack._search_type = "ytsearch"
 
     async def connect_node(self):
         """Connect to our Lavalink nodes."""
@@ -104,13 +105,19 @@ class LavaLinkCog(commands.Cog):
 
     @commands.Cog.listener("on_wavelink_track_end")
     async def on_track_end(self, player: Player, track: wavelink.Track, reason: str):
-        to_play: wavelink.YouTubeTrack = await player.queue.get_wait()
+        self.log.debug(f"track ended: {reason}")
+        to_play: wavelink.YouTubeTrack = player.queue.get()
         channel = await self.get_player_channel(player.guild.id)
         await player.play(to_play)
         embed = self.embed_factory(to_play)
         await channel.send(
             f"Now playing '{to_play.title}'", embed=disnake.Embed.from_dict(embed)
         )
+
+    @commands.Cog.listener("on_wavelink_track_exception")
+    async def on_track_exception(self, *args, **kwargs):
+        self.log.error(args)
+        self.log.error(kwargs)
 
     @commands.slash_command(name=name)
     @commands.guild_only()
@@ -132,7 +139,9 @@ class LavaLinkCog(commands.Cog):
 
         await inter.response.defer()
         toplay = await wavelink.YouTubeTrack.search(search, return_first=True)
-        if len(vc.queue) == 0 or replace:
+        if not vc.is_playing() or replace:
+            # raise wavelink.LoadTrackError({"exception": {"message": "Testing"}})
+            # why is this not handling correctly
             await vc.play(toplay)
             message = f"Now playing '{toplay.title}'"
         else:
@@ -146,13 +155,12 @@ class LavaLinkCog(commands.Cog):
     @cmd.sub_command("skip")
     async def skip_(self, inter: CmdInter, vc: Player):
         """Skips the current song"""
-        return await inter.send("Not yet implmented")
         # TODO: add skip to queue index
-        # TODO: ensure unpausing before attempted playing
         if not vc.is_playing():
-            await vc.set_pause(False)
-        await vc.seek(vc.source.length)
-        await inter.send("Skipped!")
+            await vc.resume()
+        await vc.seek(vc.source.length * 1000)
+        # source length is in seconds and seek uses milliseconds
+        await inter.send("Skipping!")
 
     @cmd.sub_command("quit")
     async def quit_(self, inter: CmdInter, vc: Player):
@@ -160,6 +168,15 @@ class LavaLinkCog(commands.Cog):
         await vc.disconnect()
         del self._player_channels[inter.guild_id]
         await inter.send(f"Goodbye {Emojis.wave.value}")
+
+    @cmd.sub_command("queue")
+    async def queue_(self, inter: CmdInter, vc: Player):
+        if len(vc.queue) <= 0:
+            return await inter.send("The queue is empty")
+        base = "\n".join([i.title for i in vc.queue])
+        await inter.send(
+            f"There are {len(vc.queue)} items in the queue.\n" + cblock(base)
+        )
 
     @commands.is_owner()
     @cmd.sub_command_group("nodes")
@@ -233,12 +250,28 @@ class LavaLinkCog(commands.Cog):
 
         await inter.send(embed=disnake.Embed.from_dict(embed_dict))
 
+    @dev_.sub_command("eval")
+    async def eval_(self, inter: CmdInter, vc: Player, source: str):
+        """Takes a one line statment and evals it in the current scope
+        Parameters
+        ----------
+        source: a string to eval
+        """
+        evaled = eval(source, locals())
+        await inter.send(cblock(evaled))
+
     @cmd.error
-    async def on_error(self, inter: CmdInter, exception: Exception):
+    async def on_error(
+        self, inter: CmdInter, exception: commands.CommandError, *args, **kwargs
+    ):  # TODO find better type hint for exception
+        # TODO find the best error handling method
+        # exceptions are still printed on error even after handling
         if isinstance(exception, commands.CheckFailure):
             await inter.send("You must be connected to a visible voice channel.")
             self.log.debug(f"'{inter.author!s}' was not connected in '{inter.guild!s}'")
-        elif isinstance(exception, wavelink.LoadTrackError):
+        elif isinstance(
+            exception, wavelink.errors.LoadTrackError
+        ):  # Might not be `CommandInvokeError`
             await inter.send("There was an issue loading the next song.")
             self.log.error("Song failed loading")
         else:
