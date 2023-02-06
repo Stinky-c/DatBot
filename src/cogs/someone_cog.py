@@ -132,7 +132,7 @@ class SomeoneCog(commands.Cog):
             )
         )
 
-    @commands.Cog.listener("on_message")
+    @commands.Cog.listener(disnake.Event.message)
     async def someone_(self, message: disnake.Message):
         gid = message.guild.id
         s = await Server.find_one(Server.sid == gid)

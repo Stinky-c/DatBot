@@ -1,7 +1,9 @@
-FROM python:3.10.9-slim AS install
+FROM python:3.11.1-slim AS install
+ARG APT_INSTALL_REMOVABLE="curl gcc g++"
+ARG APT_INSTALL="ffmpeg"
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends curl ffmpeg \
+    && apt-get install -y --no-install-recommends $APT_INSTALL $APT_INSTALL_REMOVABLE \
     && apt-get autoremove -y
 RUN pip install --upgrade pip
 WORKDIR /app/
@@ -12,7 +14,7 @@ RUN curl https://install.python-poetry.org/ > get-poetry.py
 RUN python get-poetry.py
 
 FROM install AS app-image
-ARG INSTALL_ARGS="--no-root --no-dev"
+ARG INSTALL_ARGS="--no-root --only main"
 WORKDIR /app/
 ENV POETRY_HOME="/opt/poetry"
 ENV PATH="$POETRY_HOME/bin:$PATH"
@@ -24,7 +26,7 @@ RUN poetry config virtualenvs.create false \
     && python get-poetry.py --uninstall \
     && rm get-poetry.py
 
-RUN apt-get purge -y curl \
+RUN apt-get purge -y $INSTALL_REMOVABLE \
     && apt-get clean -y \
     && rm -rf /root/.cache \
     && rm -rf /var/apt/lists/* \

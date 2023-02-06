@@ -139,7 +139,7 @@ class DatBot(commands.InteractionBot):
         handler: logging.Handler,
         level: LoggingLevels = LoggingLevels.ERROR,
     ):
-        logger = logging.getLogger(name)
+        logger = self.get_logger(name)
         logger.setLevel(level)
         handler.setFormatter(logging.Formatter(format, style="{"))
         logger.addHandler(handler)
