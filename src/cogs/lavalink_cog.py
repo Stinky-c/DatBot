@@ -167,7 +167,7 @@ class LavaLinkCog(commands.Cog):
         """Disconnects bot from voice channel"""
         await vc.disconnect()
         del self._player_channels[inter.guild_id]
-        await inter.send(f"Goodbye {Emojis.wave.value}")
+        await inter.send(f"Goodbye {Emojis.wave}")
 
     @cmd.sub_command("queue")
     async def queue_(self, inter: CmdInter, vc: Player):

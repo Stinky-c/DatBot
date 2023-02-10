@@ -11,7 +11,7 @@ from disnake.ext import commands
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from helper.models import init_models
-from helper.settings import BotSettings, LoggerConfig, LoggingLevels, Settings
+from helper.settings import BotSettings, LoggingLevels, Settings
 
 MISSING = disnake.utils.MISSING
 
@@ -20,6 +20,7 @@ class DatBot(commands.InteractionBot):
     _db_conn: AsyncIOMotorClient
     log: logging.Logger
     clog: logging.Logger
+    closeList: list[tuple[str, Coroutine]]
 
     def __init__(
         self,
@@ -54,7 +55,6 @@ class DatBot(commands.InteractionBot):
         strict_localization: bool = False,
         bot_config: BotSettings = Settings,
     ):
-        self.closeList: list[tuple[str, Coroutine]] = []
         super().__init__(
             owner_id=owner_id,
             owner_ids=owner_ids,
@@ -86,15 +86,15 @@ class DatBot(commands.InteractionBot):
             strict_localization=strict_localization,
         )
 
+        self.closeList = []
         self.config = bot_config
         self._db_conn = AsyncIOMotorClient(self.config.connections.mongo)
         self.started = False
 
         # set up logging
         # TODO add options to configure other handlers
-        for k, v in self.config.logging:
-            v: LoggerConfig
-            if v.stdout:
+        for k, v in bot_config.logging:
+            if not v.logfile:
                 self.configure_logger(
                     name=k,
                     level=v.level,
@@ -104,10 +104,10 @@ class DatBot(commands.InteractionBot):
             else:
                 self.configure_logger(
                     name=k,
-                    level=v.level.value,
+                    level=v.level,
                     format=v.format,
                     handler=logging.FileHandler(
-                        filename=v.logfile, encoding=v.encoding, mode="w"
+                        filename=v.logfile, encoding=v.encoding, mode=v.mode
                     ),
                 )
 

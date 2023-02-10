@@ -71,7 +71,7 @@ class CogSettingsView(BaseView):
         self.bot.load_extension(self.cog)
         await message.send(f"`{self.cog}` loaded", delete_after=4.0)
 
-    @ui.button(style=ButtonStyle.red, label="Close", emoji=Emojis.cross.value)
+    @ui.button(style=ButtonStyle.red, label="Close", emoji=Emojis.cross)
     async def remove_(self, button: Button, message: MesInter):
         await self.message.delete()
 

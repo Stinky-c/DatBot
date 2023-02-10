@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Emojis(Enum):
+class Emojis(StrEnum):
     """A small enum with emojis"""
 
     thumbs_up = "👍"

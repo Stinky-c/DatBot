@@ -19,21 +19,19 @@ piston = { url = "https://emkc.org/" }
 
 
 [dir] # directories for various cogs
-music = { name = "music", path = "./music", data = { data = "..." } }
+music = { name = "music", path = "./music", data = { data = "..." } } # No longer required, but cog may be renabled at anytime
 temp = { name = "temp", path = "./temp" }
 
 [patches] # Patches toggle various patches typically changing loggers
 wavelink = false # patches loggers in wavelink to enable logging
 
 [logging.cogs]
-stdout = false # log to stdout
 level = 10
     # logging levels - See src/helper/settings.py:22 for levels
     # ERROR = 40
     # INFO = 20
     # DEBUG = 10
 [logging.disnake]
-stdout = true
-logfile = "./disnake.log" # file to log to
+logfile = "./disnake.log" # defining logfile will enable logging to file
 encoding = "utf-8" # the default encoding method may be changed
 level = 40

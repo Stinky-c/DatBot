@@ -6,7 +6,7 @@ authors = ["Stinky-c <60587749+Stinky-c@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-disnake = "^2.8.0"
+disnake = "2.8.*"
 python-dotenv = "^0.21.0"
 qrcode = {extras = ["pil"], version = "^7.4.2"}
 yt-dlp = "^2022.10.4"
@@ -22,7 +22,14 @@ curse-api = "^1.0.0"
 [tool.poetry.group.dev.dependencies]
 black = { version = "^22.10.0", allow-prereleases = true }
 poethepoet = "^0.18.1"
+mypy = "^1.0.0"
 
+[tool.mypy]
+python_version = "3.11"
+
+
+[tool.poetry.group.types.dependencies]
+types-toml = "^0.10.8.3"
 
 [tool.poe.tasks]
 dev-run = "docker-compose -f docker-compose-dev.yaml up"

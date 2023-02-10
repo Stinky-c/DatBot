@@ -102,7 +102,7 @@ class DevCog(commands.Cog):
         """
         self.bot.unload_extension(cog)
         Settings.bot.cogs.remove(cog)
-        await inter.send(f"`{cog}` has been unloaded {Emojis.thumbs_up.value}")
+        await inter.send(f"`{cog}` has been unloaded {Emojis.thumbs_up}")
 
     @cmd.sub_command("load")
     async def load_(
@@ -115,7 +115,7 @@ class DevCog(commands.Cog):
         cog: The cog path to unload
         """
         self.bot.load_extension(cog)
-        await inter.send(f"`{cog}` has been loaded {Emojis.thumbs_up.value}")
+        await inter.send(f"`{cog}` has been loaded {Emojis.thumbs_up}")
 
     @cmd.sub_command("adddev")
     async def add_dev_(self, inter: CmdInter, id: disnake.Guild):
@@ -159,7 +159,7 @@ class DevCog(commands.Cog):
         path: the path to write to
         """
         Settings.save(path)
-        await inter.send(f"Config saved {Emojis.thumbs_up.value}")
+        await inter.send(f"Config saved {Emojis.thumbs_up}")
 
     @cmd.sub_command("iseven")
     async def iseven_(self, inter: CmdInter, number: commands.LargeInt):

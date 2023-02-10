@@ -4,7 +4,7 @@ from enum import IntEnum
 from glob import glob
 from os import environ
 from pathlib import Path
-from typing import Any, DefaultDict, List, Optional
+from typing import Any, DefaultDict, List, Optional, Generator
 
 import disnake
 import toml
@@ -44,11 +44,11 @@ def toml_source(settings: BaseSettings) -> dict[str, Any]:
 
 
 class LoggerConfig(BaseModel):
-    stdout: bool = True
     logfile: Path | None = None
     format: str = "{asctime:20} | {levelname:^7} | {name:15} | {message}"
     level: LoggingLevels = LoggingLevels.INFO
     encoding: str = "utf-8"
+    mode: str = "w"
 
 
 class LoggingConfig(BaseModel):
@@ -56,6 +56,9 @@ class LoggingConfig(BaseModel):
     cog: LoggerConfig
     bot: LoggerConfig
 
+    def __iter__(self) -> Generator[tuple[str, LoggerConfig], None, None]:
+        yield from self.__dict__.items()
+        # typing in `helper/cbot.py` was a bit odd and type hints didn't work
 
 class Connections(BaseModel):
     mongo: MongoDsn
