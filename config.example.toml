@@ -12,7 +12,7 @@ test_guilds = [111111111111111111, 111111111111111111]  # Test guilds register c
 dev_guilds = [111111111111111111, 111111111111111111]   # Dev guilds have dev commands enabled, and provide debugging tools
 
 [keys] # some default credentials for bundled services
-wavelink = { host = "lavalink", port = 2333, password = "youshallnotpass" } # wavelink cog may accept a link to enable connection to multiple nodes
+music = { host = "lavalink", port = 2333, password = "youshallnotpass" } # wavelink cog may accept a link to enable connection to multiple nodes
 # wavelink = [{ host = "lavalink", port = 2333, password = "youshallnotpass" },{ host = "lavalink2", port = 2333, password = "youshallpass" }]
 snekbox = { url = "http://snekbox:8060" }
 piston = { url = "https://emkc.org/" }
