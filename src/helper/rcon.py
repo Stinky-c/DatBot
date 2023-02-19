@@ -32,7 +32,7 @@ import random
 import struct
 from typing import Any
 
-from helper.errors import (
+from .errors import (
     ClientNotConnectedError,
     IncorrectPasswordError,
     RCONConnectionError,

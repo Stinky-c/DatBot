@@ -5,8 +5,17 @@ import platform as plat
 import disnake
 import psutil
 from disnake.ext import commands
-from helper import UUID, DatBot, Emojis, LinkTuple, LinkView, Settings, gen_quote
-from helper.misc import bytes2human
+from helper import (
+    UUID,
+    DatBot,
+    Emojis,
+    LinkTuple,
+    LinkView,
+    Settings,
+    gen_quote,
+    jdumps,
+    bytes2human,
+)
 from helper.models import Quote
 from helper.views import CogSettingsView
 
@@ -18,7 +27,7 @@ class DevCog(commands.Cog):
 
     def __init__(self, bot: DatBot):
         self.bot = bot
-        self.log = bot.get_logger(f"cogs.{self.name}")
+        self.log = bot.get_logger(f"cog.{self.name}")
 
     async def cog_load(self) -> None:
         self.httpclient = await self.bot.make_http(self.name)
@@ -160,6 +169,11 @@ class DevCog(commands.Cog):
         """
         Settings.save(path)
         await inter.send(f"Config saved {Emojis.thumbs_up}")
+
+    @cmd.sub_command("settings")
+    async def settings_(self, inter: CmdInter):
+        await inter.send(jdumps(Settings.dict()), ephemeral=True)
+        self.log.critical("Settings has been dumped! Please ensure safety of keys and other valuable tokens")
 
     @cmd.sub_command("iseven")
     async def iseven_(self, inter: CmdInter, number: commands.LargeInt):

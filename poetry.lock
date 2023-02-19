@@ -718,6 +718,25 @@ files = [
 pydantic = ">=1.9.0"
 
 [[package]]
+name = "mafic"
+version = "1.2.1"
+description = "A properly typehinted lavalink client for discord.py, nextcord, disnake and py-cord."
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "mafic-1.2.1-py3-none-any.whl", hash = "sha256:2c69bab779d18a9478bc3a52611c079994bc49ee04990b675a70570d3870d8fb"},
+    {file = "mafic-1.2.1.tar.gz", hash = "sha256:06332395ba46d3fbe2d74ed0ff4e71db2cf6084877a10106b827d537e36455a3"},
+]
+
+[package.dependencies]
+aiohttp = ">=3.6.0,<4.0.0"
+yarl = ">=1.0.0,<2.0.0"
+
+[package.extras]
+speedups = ["orjson (>=3.8.0,<4.0.0)"]
+
+[[package]]
 name = "motor"
 version = "3.1.1"
 description = "Non-blocking MongoDB driver for Tornado or asyncio"
@@ -1555,25 +1574,6 @@ files = [
 ]
 
 [[package]]
-name = "wavelink"
-version = "1.0.0"
-description = "A robust and powerful Lavalink wrapper for disnake"
-category = "main"
-optional = false
-python-versions = "*"
-files = []
-develop = false
-
-[package.dependencies]
-aiohttp = ">=3.7.4,<4"
-
-[package.source]
-type = "git"
-url = "https://github.com/Stinky-c/Wavelink.git"
-reference = "HEAD"
-resolved_reference = "3942206727242601fbb4a7d7ebd3b84aafa1eba9"
-
-[[package]]
 name = "websockets"
 version = "10.4"
 description = "An implementation of the WebSocket Protocol (RFC 6455 & 7692)"
@@ -1763,4 +1763,4 @@ websockets = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "1f1125fa22380a4d31aa01db1e5431bae8e3f8e153931f3a91c6e9172f006b94"
+content-hash = "875a9a9d026af8b49e95733242f3d566773e5f03eff54e3202fa9ad3b7eb4417"

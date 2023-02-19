@@ -1,3 +1,4 @@
+"""Contains all code accustom to various functionality of the bot"""
 import logging
 import signal
 import sys
@@ -8,10 +9,11 @@ from typing import Coroutine, Optional, Sequence
 import aiohttp
 import disnake
 from disnake.ext import commands
+from mafic import Player, Track
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from helper.models import init_models
-from helper.settings import BotSettings, LoggingLevels, Settings
+from .models import init_models
+from .settings import BotSettings, LoggingLevels, Settings
 
 MISSING = disnake.utils.MISSING
 
@@ -94,6 +96,8 @@ class DatBot(commands.InteractionBot):
         # set up logging
         # TODO add options to configure other handlers
         for k, v in bot_config.logging:
+            if v is None:
+                continue
             if not v.logfile:
                 self.configure_logger(
                     name=k,
@@ -211,6 +215,10 @@ class DatBot(commands.InteractionBot):
         """Returns a configured logger"""
         return logging.getLogger(name)
 
+    async def send_exception(self,exception:Exception):
+        ...
+
+
     async def on_connect(self):
         self.log.info("Connecting...")
 
@@ -226,3 +234,14 @@ class DatBot(commands.InteractionBot):
             self.log.info(f"running '{name}' Close coroutine")
             await close
         await super().close()
+
+
+class LavaPlayer(Player[DatBot]):  # TODO: new name
+    managed: disnake.TextChannel
+    queue: list[Track]
+
+    def __init__(self, client: DatBot, channel: disnake.abc.Connectable) -> None:
+        super().__init__(client, channel)
+        self.queue: list[Track] = []
+        self.managed: disnake.TextChannel = None
+        self._paused: bool = False

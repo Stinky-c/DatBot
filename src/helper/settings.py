@@ -55,10 +55,12 @@ class LoggingConfig(BaseModel):
     disnake: LoggerConfig
     cog: LoggerConfig
     bot: LoggerConfig
+    mafic: Optional[LoggerConfig]
 
     def __iter__(self) -> Generator[tuple[str, LoggerConfig], None, None]:
         yield from self.__dict__.items()
         # typing in `helper/cbot.py` was a bit odd and type hints didn't work
+
 
 class Connections(BaseModel):
     mongo: MongoDsn
@@ -80,7 +82,7 @@ class BotConfig(BaseModel):
     intents_flag: int = 3276799
     activity_str: str = "The fucks"
     activity_type: int = disnake.ActivityType.watching.value
-    owner_ids: Optional[set[int]]
+    owner_ids: Optional[tuple[int]]
     test_guilds: Optional[List[int]]
     dev_guilds: Optional[List[int]]
     cogs: List[str] = Field(  # TODO find way to exlclude from schema
@@ -112,6 +114,7 @@ class Directory(BaseModel):
 
 class Patches(BaseModel):
     wavelink: bool = False
+    mafic: bool = True
 
 
 class BotSettings(BaseSettings):

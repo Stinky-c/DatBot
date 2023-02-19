@@ -1,3 +1,6 @@
+from functools import partial
+
+from disnake.ext import tasks
 from disnake.utils import MISSING
 
 # proxy
@@ -17,10 +20,13 @@ from .misc import (
     format_time,
     gen_quote,
     jdumps,
+    uid,
     variadic,
 )
 from .models import Quote, Server, User, init_models
 from .settings import Settings
 from .views import LinkView
+
+task = partial(tasks.loop, count=1)
 
 __all__ = ("DatBot",)

@@ -5,8 +5,10 @@ from enum import EnumMeta, IntEnum
 from glob import glob
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 import disnake
+from pydantic.json import pydantic_encoder
 
 from .models import Quote
 
@@ -85,15 +87,20 @@ def escape_all(input: str) -> str:
     return s2
 
 
-def jdumps(obj: Any) -> str:
+def jdumps(obj: Any,size:int=2000) -> str:
     """Dumps object to a discord code block"""
-    dumped = f"```json\n{json.dumps(obj,indent=4)}\n```"
-    return dumped if len(dumped) <= 2000 else "Payload too large"
+    dumped = f"```json\n{json.dumps(obj, indent=4, default=pydantic_encoder)}\n```"
+    return dumped if len(dumped) <= size else "Payload too large"
 
 
-def cblock(obj: Any, key: str = ""):
+def cblock(obj: Any, key: str = "", size: int = 2000):
     block = f"```{key}\n{obj}\n```"
-    return block if len(block) <= 200 else "Payload too large"
+    return block if len(block) <= size else "Payload too large"
+
+
+def uid(length: int = 6):
+    """Generates a short id based on uuid4"""
+    return uuid4().hex[:length]
 
 
 class ContainsEnumMeta(EnumMeta):

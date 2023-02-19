@@ -4,7 +4,7 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from redis.asyncio import Redis
 
-from helper.models import DocumentModels, Server, User
+from .models import DocumentModels, Server, User
 
 
 # FIXME Kinda pointless

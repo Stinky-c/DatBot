@@ -11,7 +11,7 @@ More work features and functions coming later.
 ## TODO
 
 - Change to use a CLI
-- A better starting method
+- Finish music
 - Fix watchdog
     - double reloading
     - not watching helper
