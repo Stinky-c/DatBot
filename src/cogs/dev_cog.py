@@ -173,7 +173,9 @@ class DevCog(commands.Cog):
     @cmd.sub_command("settings")
     async def settings_(self, inter: CmdInter):
         await inter.send(jdumps(Settings.dict()), ephemeral=True)
-        self.log.critical("Settings has been dumped! Please ensure safety of keys and other valuable tokens")
+        self.log.critical(
+            "Settings has been dumped! Please ensure safety of keys and other valuable tokens"
+        )
 
     @cmd.sub_command("iseven")
     async def iseven_(self, inter: CmdInter, number: commands.LargeInt):
@@ -234,6 +236,24 @@ class DevCog(commands.Cog):
         for mess in self.bot.cached_messages:
             count[mess.author.id] += 1
         await inter.send(f"```json\n{json.dumps(count,indent=4)}```")
+
+    @cmd.sub_command("status")
+    async def status_(self, inter: CmdInter):
+        """Checks discord status and returns the state"""
+        # TODO: make it look nicer
+        url = "https://discordstatus.com/api/v2/status.json"
+        async with self.httpclient.get(url) as req:
+            if req.status != 200:
+                return await inter.send("Discord Status page returned a non 200")
+            data: dict = await req.json()
+            embed = {
+                "title": "Discord Status",
+                "description": data["status"]["description"],
+                "color": 0x2ECC71
+                if data["status"]["indicator"] == "none"
+                else 0xE74C3C,
+            }
+            return await inter.send(embed=disnake.Embed.from_dict(embed))
 
     @cmd.sub_command_group("quote")
     async def quote_(self, inter: CmdInter):

@@ -12,3 +12,18 @@ class IncorrectPasswordError(Exception):
 
 class RCONConnectionError(Exception):
     pass
+
+
+class MathError(Exception):
+    """General Math Error"""
+
+    def __init__(self, statement: str = None) -> None:
+        self.statment = statement
+
+
+class InvalidStatment(MathError):
+    """Incorrectly formatted statment"""
+
+
+class NotAFunction(MathError):
+    """The statment contains an unknown functions"""
