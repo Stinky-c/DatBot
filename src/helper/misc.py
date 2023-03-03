@@ -87,9 +87,9 @@ def escape_all(input: str) -> str:
     return s2
 
 
-def jdumps(obj: Any,size:int=2000) -> str:
+def jdumps(obj: Any, size: int = 2000, json_encoder=pydantic_encoder) -> str:
     """Dumps object to a discord code block"""
-    dumped = f"```json\n{json.dumps(obj, indent=4, default=pydantic_encoder)}\n```"
+    dumped = f"```json\n{json.dumps(obj, indent=4, default=json_encoder)}\n```"
     return dumped if len(dumped) <= size else "Payload too large"
 
 

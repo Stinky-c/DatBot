@@ -18,11 +18,13 @@ from helper import (
 )
 from helper.models import Quote
 from helper.views import CogSettingsView
+from typing import TypeAlias
 
 
 class DevCog(commands.Cog):
     description = "This cog is filled with useful dev commands"
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "dev"
 
     def __init__(self, bot: DatBot):
@@ -172,7 +174,11 @@ class DevCog(commands.Cog):
 
     @cmd.sub_command("settings")
     async def settings_(self, inter: CmdInter):
-        await inter.send(jdumps(Settings.dict()), ephemeral=True)
+        """Dumps the bot settings"""
+        embed = disnake.Embed(
+            title="Settings", description=jdumps(Settings.dict(), size=4096)
+        )
+        await inter.send(embed=embed, ephemeral=True)
         self.log.critical(
             "Settings has been dumped! Please ensure safety of keys and other valuable tokens"
         )
@@ -236,6 +242,14 @@ class DevCog(commands.Cog):
         for mess in self.bot.cached_messages:
             count[mess.author.id] += 1
         await inter.send(f"```json\n{json.dumps(count,indent=4)}```")
+
+    @cmd.sub_command("oauth")
+    async def oauth_(self, inter: CmdInter, client_id: str):
+        url = disnake.utils.oauth_url(
+            client_id=client_id, permissions=disnake.Permissions.all()
+        )
+        self.log.info(f"oauth url generated for {client_id}; '{url}'")
+        await inter.send(url, ephemeral=True)
 
     @cmd.sub_command("status")
     async def status_(self, inter: CmdInter):

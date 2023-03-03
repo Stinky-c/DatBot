@@ -5,6 +5,7 @@ import disnake
 from disnake.ext import commands
 from helper import DatBot
 from helper.models import Server, SomeoneRoles
+from typing import TypeAlias
 
 
 # not very happy about this
@@ -41,7 +42,8 @@ class RoleButtonSomeoneView(disnake.ui.View):
 
 
 class SomeoneCog(commands.Cog):
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "someone"
     role_name = "someone-list"
     max_lru_size = 10
@@ -68,6 +70,7 @@ class SomeoneCog(commands.Cog):
         return s.someone
 
     @commands.slash_command(name=name)
+    @commands.guild_only()
     async def cmd(self, inter: CmdInter):
         ...
 
@@ -95,9 +98,12 @@ class SomeoneCog(commands.Cog):
         )
 
     @cmd.sub_command("add")
-    async def join_(self, inter: CmdInter, s: SomeoneRoles):
+    @commands.guild_only()
+    async def join_(self, inter: GuildInter, s: SomeoneRoles):
         """Joins the guilds someone subscriber list"""
         role = inter.guild.get_role(s.subscriber)
+        if not role:
+            return await inter.send("Someone roles are not configured")
 
         await inter.author.add_roles(
             role, reason=f"User joined the `{role.name}` mention list"
@@ -107,9 +113,11 @@ class SomeoneCog(commands.Cog):
         )
 
     @cmd.sub_command("leave")
-    async def leave_(self, inter: CmdInter, s: SomeoneRoles):
+    async def leave_(self, inter: GuildInter, s: SomeoneRoles):
         """Leaves the guilds Someone subscriber list"""
         role = inter.guild.get_role(s.subscriber)
+        if not role:
+            return await inter.send("Someone roles are not configured")
 
         await inter.author.remove_roles(
             role, reason=f"User left the `{role.name}` mention list"
@@ -134,10 +142,16 @@ class SomeoneCog(commands.Cog):
 
     @commands.Cog.listener(disnake.Event.message)
     async def someone_(self, message: disnake.Message):
+        if not message.guild:
+            return
+
         gid = message.guild.id
         s = await Server.find_one(Server.sid == gid)
 
-        if len(message.role_mentions) <= 0 and s is None:
+        if len(message.role_mentions) <= 0 or s is None:
+            return
+
+        if not s.someone:
             return
 
         someone = s.someone

@@ -1,9 +1,10 @@
+from typing import TypeAlias
+
 import disnake
 import mafic
 from disnake.ext import commands
 from helper import CogLoadingFailure, DatBot, Emojis, Settings, cblock, jdumps, uid
 from helper.cbot import LavaPlayer
-import traceback
 
 # TODO: update to use REST based API
 # TODO: add playlist
@@ -13,7 +14,8 @@ import traceback
 
 
 class LavaLinkCog(commands.Cog):
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "music"
     key_enabled = True
     key_loc = "music"
@@ -252,7 +254,7 @@ class LavaLinkCog(commands.Cog):
         )
 
     @commands.is_owner()
-    @cmd.sub_command_group("dev")
+    @cmd.sub_command_group("dev", guild_ids=Settings.bot.dev_guilds)
     async def dev_(self, inter: CmdInter):
         """Allows for viewing & manipulation of internal data"""
         self.log.debug(f"{inter.author} @ {inter.guild.name}: {inter.id}")
@@ -262,7 +264,7 @@ class LavaLinkCog(commands.Cog):
         """Returns a list of vc which players are connected to"""
         tmp = []
         for node in self.nodes.nodes:
-            for player in list(node.players.values()):
+            for player in node.players:
                 tmp.append(player.guild.id)
         await inter.send(jdumps(tmp))
 
@@ -316,8 +318,7 @@ class LavaLinkCog(commands.Cog):
             return await inter.send("Unknown player error")
         else:
             self.log.error(repr(inter))
-            ch = await self.bot.fetch_channel(1035017466205712454)
-            await ch.send(traceback.format_exc()[:1999])
+            await self.bot.send_exception(exception)
 
 
 def setup(bot: DatBot):

@@ -1,12 +1,14 @@
 import disnake
 from disnake.ext import commands
 from helper import CogLoadingFailure, DatBot, Settings
+from typing import TypeAlias
 
 
 class ExampleCog(commands.Cog):
     """This is the base cog for creating a new cog"""
 
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "example"
     key_enabled = False
 

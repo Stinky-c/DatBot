@@ -1,6 +1,6 @@
 FROM python:3.11.1-slim AS install
-ARG APT_INSTALL_REMOVABLE="curl gcc g++"
-ARG APT_INSTALL="ffmpeg"
+ARG APT_INSTALL_REMOVABLE="curl"
+ARG APT_INSTALL=""
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends $APT_INSTALL $APT_INSTALL_REMOVABLE \

@@ -1,12 +1,14 @@
 import disnake
 from disnake.ext import commands
 from helper import DatBot, Settings, task
+from typing import TypeAlias
 
 
 class ExampleCog(commands.Cog):
     """This is an example cog powered by a partial decorator `task`"""
 
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "task"
     key_enabled = False
 

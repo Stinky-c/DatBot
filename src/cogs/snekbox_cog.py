@@ -3,10 +3,12 @@ import re
 import disnake
 from disnake.ext import commands
 from helper import CogLoadingFailure, DatBot, Settings
+from typing import TypeAlias
 
 
 class SnekBoxCog(commands.Cog):
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "snekbox"
     key_enabled = True
     key_loc = "snekbox"

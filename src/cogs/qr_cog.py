@@ -1,5 +1,5 @@
 import io
-from typing import Tuple
+from typing import Optional, Tuple
 
 import disnake
 import qrcode as qrc
@@ -41,8 +41,8 @@ class QuickResponseCodeCog(commands.Cog):
     async def auto(
         self,
         inter: disnake.CmdInter,
-        data: str = None,
-        file: disnake.Attachment = None,
+        data: Optional[str] = None,
+        file: Optional[disnake.Attachment] = None,
     ):
         buf = io.BytesIO()
         if data:
@@ -63,8 +63,8 @@ class QuickResponseCodeCog(commands.Cog):
     async def stylized(
         self,
         inter: disnake.CmdInter,
-        data: str = None,
-        file: disnake.Attachment = None,
+        data: Optional[str] = None,
+        file: Optional[disnake.Attachment] = None,
         style: str = commands.Param(
             choices=list(moddrawer.keys()),
             description="Style for the data contained in the code",
@@ -112,8 +112,8 @@ class QuickResponseCodeCog(commands.Cog):
     async def asciiC(
         self,
         inter: disnake.CmdInter,
-        data: str = None,
-        file: disnake.Attachment = None,
+        data: Optional[str] = None,
+        file: Optional[disnake.Attachment] = None,
         as_file: bool = False,
     ):
         qrascii = qrc.QRCode(error_correction=ERROR_CORRECT_H)
@@ -145,8 +145,8 @@ class QuickResponseCodeCog(commands.Cog):
     async def svgS(
         self,
         inter: disnake.CmdInter,
-        data: str = None,
-        file: disnake.Attachment = None,
+        data: Optional[str] = None,
+        file: Optional[disnake.Attachment] = None,
         error_correction: str = commands.Param(
             default="15%", choices=list(errorCorrectionLevel.keys())
         ),

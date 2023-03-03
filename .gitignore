@@ -81,5 +81,6 @@ cython_debug/
 .ignored/
 .vscode/
 config.toml
+out/
 
 # src

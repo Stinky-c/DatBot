@@ -11,9 +11,11 @@ import disnake
 from disnake.ext import commands
 from mafic import Player, Track
 from motor.motor_asyncio import AsyncIOMotorClient
+import traceback
 
 from .models import init_models
 from .settings import BotSettings, LoggingLevels, Settings
+from .misc import cblock
 
 MISSING = disnake.utils.MISSING
 
@@ -23,6 +25,7 @@ class DatBot(commands.InteractionBot):
     log: logging.Logger
     clog: logging.Logger
     closeList: list[tuple[str, Coroutine]]
+    _echannel: disnake.TextChannel = None
 
     def __init__(
         self,
@@ -215,9 +218,30 @@ class DatBot(commands.InteractionBot):
         """Returns a configured logger"""
         return logging.getLogger(name)
 
-    async def send_exception(self,exception:Exception):
-        ...
+    async def send_exception(self, exception: Exception):
+        """Sends error to channel, defaults to logging if unset"""
 
+        # if Settings.bot.error_channel and self._echannel is not  :
+        if Settings.bot.error_channel or self._echannel:
+            c = Settings.bot.error_channel
+            self.log.info(f"Configuring error channel to {c}")
+            self._echannel = await self.fetch_channel(c)
+
+        error = "".join(traceback.format_exception(exception))
+        self.log.error(repr(self._echannel))
+        if self._echannel:
+            c = self._echannel
+            embed = disnake.Embed(
+                title="Unhandled Exception",
+                timestamp=disnake.utils.utcnow(),
+                description=cblock(error, size=4096),
+                color=disnake.Color.red(),
+            )
+            await c.send(embed=embed)
+        else:
+            self.log.exception("An error occured")
+            ...
+        return error
 
     async def on_connect(self):
         self.log.info("Connecting...")

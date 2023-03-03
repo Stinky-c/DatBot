@@ -1,10 +1,12 @@
 import disnake
 from disnake.ext import commands
 from helper import DatBot
+from typing import TypeAlias
 
 
 class ModerationCog(commands.Cog):
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "mod"
 
     def __init__(self, bot: DatBot):

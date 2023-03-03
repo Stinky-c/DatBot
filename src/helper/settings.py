@@ -33,7 +33,7 @@ class LoggingLevels(IntEnum):
     FATAL = CRITICAL
 
 
-def toml_source(settings: BaseSettings) -> dict[str, Any]:
+def toml_source(settings: BaseSettings) -> dict[Any, Any]:
     encoding = settings.__config__.env_file_encoding
     env = "DATBOT_CONFIG"
     fp = Path(environ.get(env, "config.toml"))
@@ -44,7 +44,7 @@ def toml_source(settings: BaseSettings) -> dict[str, Any]:
 
 
 class LoggerConfig(BaseModel):
-    logfile: Path | None = None
+    logfile: Optional[Path]  = None
     format: str = "{asctime:20} | {levelname:^7} | {name:15} | {message}"
     level: LoggingLevels = LoggingLevels.INFO
     encoding: str = "utf-8"
@@ -93,6 +93,7 @@ class BotConfig(BaseModel):
         default_factory=lambda: cogs_factory("*_disabled.py"),
         exclude=True,
     )
+    error_channel: int | bool = False # TODO: either false or int
 
 
 class DevConfig(BaseModel):

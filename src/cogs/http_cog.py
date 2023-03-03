@@ -3,10 +3,12 @@ from urllib.parse import unquote
 import disnake
 from disnake.ext import commands
 from helper import HTTP_CODES, DatBot
+from typing import TypeAlias
 
 
 class HTTPCog(commands.Cog):
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter:TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "http"
 
     def __init__(self, bot: DatBot):

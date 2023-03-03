@@ -10,6 +10,7 @@ activity_type = 3
 owner_ids = [111111111111111111] # replace with owner ids or leave blank for auto
 test_guilds = [111111111111111111, 111111111111111111]  # Test guilds register commands faster
 dev_guilds = [111111111111111111, 111111111111111111]   # Dev guilds have dev commands enabled, and provide debugging tools
+error_channel = 111111111111111111 # A channel where unhandled are logged too
 
 [keys] # some default credentials for bundled services
 music = { host = "lavalink", port = 2333, password = "youshallnotpass" } # wavelink cog may accept a link to enable connection to multiple nodes

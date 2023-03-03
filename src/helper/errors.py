@@ -1,3 +1,5 @@
+from typing import Optional
+
 class CogLoadingFailure(Exception):
     """For when you just refuse to load the cog"""
 
@@ -17,7 +19,7 @@ class RCONConnectionError(Exception):
 class MathError(Exception):
     """General Math Error"""
 
-    def __init__(self, statement: str = None) -> None:
+    def __init__(self, statement: Optional[str] = None) -> None:
         self.statment = statement
 
 

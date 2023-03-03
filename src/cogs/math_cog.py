@@ -2,12 +2,13 @@ import ast
 import math
 import operator as op
 import re
-from typing import Callable
+from typing import Callable, Literal, TypeAlias
 
 import disnake
 from disnake.ext import commands
 from helper import DatBot
 from helper.errors import InvalidStatment, MathError, NotAFunction
+from data.math import help_message
 
 math_op = {
     ast.USub: op.neg,
@@ -18,13 +19,21 @@ math_op = {
     ast.Div: op.truediv,
     ast.Pow: op.pow,
     ast.FloorDiv: op.floordiv,
+    ast.Mod: op.mod,
+    # Functions
     ast.Call: {
-        "log": math.log10,
+        "log10": math.log10,
+        "log": math.log,
         "ln": math.log,
         "sqrt": math.sqrt,
         "cos": math.cos,
         "sin": math.sin,
         "tan": math.tan,
+        "rad": math.radians,
+        "deg": math.degrees,
+        "gcd": math.gcd,
+        "lcm": math.lcm,
+        "round": round,
     },
 }
 
@@ -58,7 +67,8 @@ op_table = {
 class MathCog(commands.Cog):
     """This is the base cog for creating a new cog"""
 
-    CmdInter = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "math"
     key_enabled = False
 
@@ -89,7 +99,8 @@ class MathCog(commands.Cog):
             if a is None:
                 raise NotAFunction
             return a(
-                *[i.value for i in node.args], **{o.arg: o.value for o in node.keywords}
+                *[self.eval_(i, op_map) for i in node.args],
+                **{o.arg: self.eval_(o, op_map) for o in node.keywords},
             )
 
         else:
@@ -98,19 +109,30 @@ class MathCog(commands.Cog):
     @commands.slash_command(name=name)
     async def cmd(self, inter: CmdInter):
         """Shows the help message"""  # TODO:
+        embed_dict = {
+            "title": "Math Help",
+            "timestamp": disnake.utils.utcnow().isoformat(),
+            "description": help_message,
+            "color": disnake.Color.random(),
+        }
         await inter.send(
-            "To get started post a math equation in the form of '`<math>`??' to evaulate"
+            "To get started post a math equation in the form of `` `<math>`??`` to evaulate\n please note some major changes",
+            embed=disnake.Embed.from_dict(embed_dict),
         )
-        self.log.debug(f"{inter.author.name} @ {inter.guild.name}")
 
     @commands.Cog.listener(disnake.Event.message)
     async def on_message(self, message: disnake.Message):
         content = message.content
+        if message.author.bot:
+            # I want to enable bots to use this
+            # chat relays should be able to use this
+            return
+
         if not self.reg.search(content):
             return
 
         for matched in self.reg.finditer(content):
-            statement = matched.group("statement").replace("^", "**")
+            statement = matched.group("statement")
 
             # op_map = op_table[matched.group("key")]
             op_map = math_op
@@ -119,7 +141,7 @@ class MathCog(commands.Cog):
             except NotAFunction:
                 return await message.reply("Unknown Functions", mention_author=False)
             except SyntaxError:
-                return message.reply("Failed to parse", mention_author=False)
+                return await message.reply("Failed to parse", mention_author=False)
 
             except MathError:
                 return await message.reply(

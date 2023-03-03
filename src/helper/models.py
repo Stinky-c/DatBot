@@ -102,11 +102,11 @@ class PistonEvalJob(BaseModel):
 class PistonRunObject(BaseModel):
     """Either a run or compile stage of a response"""
 
-    stdout: str | None
-    stderr: str | None
+    stdout: Optional[str]
+    stderr: Optional[str]
     output: str
     code: int
-    signal: str | None
+    signal: Optional[str]
 
 
 class PistonEvalResponse(BaseModel):
