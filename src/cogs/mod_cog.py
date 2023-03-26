@@ -68,13 +68,25 @@ class ModerationCog(Cog):
         channel: disnake.TextChannel,
         server: Server,
     ):
+        """
+        Configures the servers pin channel using a webhook
+        Parameters
+        ----------
+        channel: The channel messages show be sent to
+        """
         if not isinstance(channel, disnake.TextChannel):
             await inter.send("Not a text channel!")
             return
+
         if server.pinChannel:
-            await server.pinChannel_webhook(self.webhook_http).delete(
-                reason="Pin Channel webhook has been moved"
-            )
+            try:
+                await server.pinChannel_webhook(self.webhook_http).delete(
+                    reason="Pin Channel webhook has been moved"
+                )
+            except disnake.errors.NotFound:  # TODO: find if there are more errors possible
+                await inter.send("Preconfigured webhook missing, skipping")
+            except Exception:
+                await inter.send("Unknown error removing old webhook, skipping")
 
         hook = await channel.create_webhook(name="Pin Channel Webhook")
         server.pinChannel = hook.url
