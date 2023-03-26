@@ -26,6 +26,7 @@ from .misc import (
 from .models import Quote, Server, User, init_models
 from .settings import Settings
 from .views import LinkView
+from .ccog import Cog
 
 task = partial(tasks.loop, count=1)
 

@@ -27,6 +27,7 @@ mypy = "^1.0.0"
 python_version = "3.11"
 
 
+
 [tool.poetry.group.types.dependencies]
 types-toml = "^0.10.8.3"
 

@@ -90,12 +90,6 @@ class DatBot(commands.InteractionBot):
             localization_provider=localization_provider,
             strict_localization=strict_localization,
         )
-
-        self.closeList = []
-        self.config = bot_config
-        self._db_conn = AsyncIOMotorClient(self.config.connections.mongo)
-        self.started = False
-
         # set up logging
         # TODO add options to configure other handlers
         for k, v in bot_config.logging:
@@ -120,6 +114,12 @@ class DatBot(commands.InteractionBot):
 
         self.log = self.get_logger("bot")
         self.clog = self.get_logger("cog")
+
+        # configure extras
+        self.closeList = []
+        self.config = bot_config
+        self._db_conn = AsyncIOMotorClient(self.config.connections.mongo)
+        self.started = False
 
     @classmethod
     def from_settings(cls, settings: BotSettings = Settings):

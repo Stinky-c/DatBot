@@ -66,8 +66,8 @@ class SomeoneCog(commands.Cog):
         return s
 
     @commands.register_injection
-    async def get_someone(self, inter: CmdInter, s: Server) -> SomeoneRoles:
-        return s.someone
+    async def get_someone(self, inter: CmdInter, server: Server) -> SomeoneRoles:
+        return server.someone
 
     @commands.slash_command(name=name)
     @commands.guild_only()
@@ -80,7 +80,7 @@ class SomeoneCog(commands.Cog):
         inter: CmdInter,
         subscribe_role: disnake.Role,
         listen_role: disnake.Role,
-        s: Server,
+        server: Server,
     ):
         """Sets up the guilds someone subscriber list
 
@@ -90,9 +90,9 @@ class SomeoneCog(commands.Cog):
         listen_role: a role to listen
         """
         someone = SomeoneRoles(mention=listen_role.id, subscriber=subscribe_role.id)
-        s.someone = someone
+        server.someone = someone
         await inter.response.defer()
-        await s.save()
+        await server.save()
         return await inter.send(
             f"Setup complete\nListen role: {someone.mention}\nSubscriber Role: {someone.subscriber}"
         )
@@ -113,9 +113,9 @@ class SomeoneCog(commands.Cog):
         )
 
     @cmd.sub_command("leave")
-    async def leave_(self, inter: GuildInter, s: SomeoneRoles):
+    async def leave_(self, inter: GuildInter, sRoles: SomeoneRoles):
         """Leaves the guilds Someone subscriber list"""
-        role = inter.guild.get_role(s.subscriber)
+        role = inter.guild.get_role(sRoles.subscriber)
         if not role:
             return await inter.send("Someone roles are not configured")
 

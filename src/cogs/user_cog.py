@@ -31,9 +31,7 @@ class UserCog(commands.Cog):
 
     @commands.user_command(name="User Info")
     async def user_info_(self, inter: disnake.CmdInter, user: disnake.Member):
-        user_roles = "\n".join(
-            [i.mention for i in user.roles if not i.name == "@everyone"]
-        )
+        user_roles = "\n".join([i.mention for i in user.roles[1:]])
 
         if user.premium_since:
             premium = disnake.utils.format_dt(user.premium_since, "F")

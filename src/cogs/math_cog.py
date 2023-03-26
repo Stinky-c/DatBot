@@ -2,12 +2,12 @@ import ast
 import math
 import operator as op
 import re
-from typing import Callable, Literal, TypeAlias
+from typing import Callable,  TypeAlias
 
 import disnake
 from disnake.ext import commands
 from helper import DatBot
-from helper.errors import InvalidStatment, MathError, NotAFunction
+from helper.errors import MathError, NotAFunction
 from data.math import help_message
 
 math_op = {

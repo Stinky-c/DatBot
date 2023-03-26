@@ -1,19 +1,17 @@
 import disnake
 from disnake.ext import commands
-from helper import DatBot
+from helper import DatBot, Server, Cog
 from typing import TypeAlias
 
 
-class ModerationCog(commands.Cog):
+class ModerationCog(Cog):
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    MsgInter: TypeAlias = disnake.MessageCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "mod"
 
-    def __init__(self, bot: DatBot):
-        self.bot = bot
-
     async def cog_load(self):
-        ...
+        self.webhook_http = await self.bot.make_http("mod.webhook")
 
     @commands.slash_command(name=name)
     async def cmd(self, inter: CmdInter):
@@ -42,9 +40,46 @@ class ModerationCog(commands.Cog):
             f"'{user.name}' has been banned for '{reason}'", ephemeral=ephemeral
         )
 
-    async def vote_kick_(self, inter: CmdInter, user: disnake.Member):
-        # A vote kick
-        ...
+    @commands.message_command(name="Pin Message")
+    @commands.guild_only()
+    async def pin_message_(
+        self,
+        inter: MsgInter,
+        message: disnake.Message,
+    ):
+        server = await self.get_server(inter)  # fix injection code
+
+        if not server.pinChannel:
+            await inter.send("Server is not properly configured")
+            return
+
+        hook = server.pinChannel_webhook(self.webhook_http)
+        await hook.send(
+            message.content,
+            username=message.author.display_name,
+            avatar_url=message.author.avatar.url,
+        )
+        await inter.send("Posted!", ephemeral=True)
+
+    @cmd.sub_command("webhook")
+    async def configure_pin_webhook(
+        self,
+        inter: CmdInter,
+        channel: disnake.TextChannel,
+        server: Server,
+    ):
+        if not isinstance(channel, disnake.TextChannel):
+            await inter.send("Not a text channel!")
+            return
+        if server.pinChannel:
+            await server.pinChannel_webhook(self.webhook_http).delete(
+                reason="Pin Channel webhook has been moved"
+            )
+
+        hook = await channel.create_webhook(name="Pin Channel Webhook")
+        server.pinChannel = hook.url
+        await server.save()
+        await inter.send(f"A webhook has been configured on {channel.mention}")
 
 
 def setup(bot: DatBot):

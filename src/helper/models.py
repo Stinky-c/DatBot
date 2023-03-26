@@ -6,6 +6,7 @@ import disnake
 from beanie import Document, Indexed, init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
+import aiohttp
 
 from .ctypes import UUID
 
@@ -52,6 +53,7 @@ class Server(Document):
     name: str
     checks: Optional[list[dict]]
     someone: Optional[SomeoneRoles]
+    pinChannel: Optional[str]  # URL of webhook
 
     @classmethod
     def from_guild(cls, guild: disnake.Guild):
@@ -60,6 +62,9 @@ class Server(Document):
             ownId=guild.owner_id,
             name=guild.name,
         )
+
+    def pinChannel_webhook(self, session: aiohttp.ClientSession):
+        return disnake.Webhook.from_url(self.pinChannel, session=session)
 
     class Settings:
         use_cache = True
