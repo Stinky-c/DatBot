@@ -3,7 +3,7 @@ from functools import partial
 
 import disnake
 from disnake.ext import commands
-from helper import DatBot
+from helper import DatBot, Cog
 from helper.models import Server, SomeoneRoles
 from typing import TypeAlias
 
@@ -41,15 +41,11 @@ class RoleButtonSomeoneView(disnake.ui.View):
         )
 
 
-class SomeoneCog(commands.Cog):
+class SomeoneCog(Cog):
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "someone"
     role_name = "someone-list"
-    max_lru_size = 10
-
-    def __init__(self, bot: DatBot):
-        self.bot = bot
 
     async def cog_load(self):
         ...
@@ -57,13 +53,6 @@ class SomeoneCog(commands.Cog):
     async def fetch_role(self, guild_id: int, role_id: int) -> disnake.Role:
         g = await self.bot.fetch_guild(guild_id)
         return g.get_role(role_id)
-
-    @commands.register_injection
-    async def get_server(self, inter: CmdInter) -> Server:
-        s = await Server.find_one(inter.guild_id == Server.sid)
-        if not s:
-            return await Server.from_guild(inter.guild).create()
-        return s
 
     @commands.register_injection
     async def get_someone(self, inter: CmdInter, server: Server) -> SomeoneRoles:

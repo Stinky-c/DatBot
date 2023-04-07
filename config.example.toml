@@ -1,39 +1,44 @@
 [connections] # Database connections
+# Leave as default unless not using preconfigured database
 mongo = "mongodb://mongo:27017"
 
-[bot] # bot settings
+[bot] # Bot settings
 reload_flag = false
 command_flag = 30
 intents_flag = 3276799
 activity_str = "The Ducks"
 activity_type = 3
-owner_ids = [111111111111111111] # replace with owner ids or leave blank for auto
+owner_ids = [111111111111111111] # Replace with owner ids or leave blank for auto
 test_guilds = [111111111111111111, 111111111111111111]  # Test guilds register commands faster
 dev_guilds = [111111111111111111, 111111111111111111]   # Dev guilds have dev commands enabled, and provide debugging tools
-error_channel = 111111111111111111 # A channel where unhandled are logged too
+error_channel = 111111111111111111 # A channel where unhandled exceptions are logged too
 
 [keys] # some default credentials for bundled services
-music = { host = "lavalink", port = 2333, password = "youshallnotpass" } # wavelink cog may accept a link to enable connection to multiple nodes
-# wavelink = [{ host = "lavalink", port = 2333, password = "youshallnotpass" },{ host = "lavalink2", port = 2333, password = "youshallpass" }]
+music = { host = "lavalink", port = 2333, password = "youshallnotpass" } 
+# music cog may accept a link to enable connection to multiple nodes
+# music = [{ host = "lavalink", port = 2333, password = "youshallnotpass" },{ host = "lavalink2", port = 2333, password = "youshallpass" }]
 snekbox = { url = "http://snekbox:8060" }
 piston = { url = "https://emkc.org/" }
+# some optional services that require a key have a `enabled` field
+cfcore = { enabled = false, key = "<Curse Forge API key>" }
 
 
-[dir] # directories for various cogs
-music = { name = "music", path = "./music", data = { data = "..." } } # No longer used
+[dir] # Directories for various cogs
+# Currently unused
+music = { name = "music", path = "./music", data = { data = "..." } }
 temp = { name = "temp", path = "./temp" }
 
 [patches] # Patches toggle various patches typically changing loggers
 # Currently unused
 
-[logging.cog] # command logging
+[logging.cog] # Command logging
 level = 10
-    # logging levels - See src/helper/settings.py:22 for levels
-    # CRITICAL = 50
-    # ERROR = 40
-    # WARNING = 30
-    # INFO = 20
-    # DEBUG = 10
+# logging levels - See src/helper/settings.py:22 for levels
+# CRITICAL = 50
+# ERROR = 40
+# WARNING = 30
+# INFO = 20
+# DEBUG = 10
 
 
 [logging.disnake]

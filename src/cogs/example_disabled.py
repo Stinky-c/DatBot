@@ -1,21 +1,16 @@
 import disnake
 from disnake.ext import commands
-from helper import CogLoadingFailure, DatBot, Settings
+from helper import CogLoadingFailure, DatBot, Settings, Cog
 from typing import TypeAlias
 
 
-class ExampleCog(commands.Cog):
+class ExampleCog(Cog):
     """This is the base cog for creating a new cog"""
 
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "example"
     key_enabled = False
-
-    def __init__(self, bot: DatBot):
-        # init logic here
-        self.bot = bot
-        self.log = bot.get_logger(f"cog.{self.name}")
 
     async def cog_load(self):
         # async init logic here
@@ -36,8 +31,4 @@ class ExampleCog(commands.Cog):
 
 
 def setup(bot: DatBot):
-    if ExampleCog.key_enabled or not Settings.keys.get(ExampleCog.key_loc):
-        raise CogLoadingFailure(
-            f"Missing `{ExampleCog.key_loc}` api key. Disable or provide key"
-        )
     bot.add_cog(ExampleCog(bot))

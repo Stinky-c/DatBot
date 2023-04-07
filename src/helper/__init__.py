@@ -1,10 +1,11 @@
-from functools import partial
+from functools import partial as _partial
 
-from disnake.ext import tasks
-from disnake.utils import MISSING
+from disnake.ext import tasks as _tasks
 
 # proxy
 from motor.motor_asyncio import AsyncIOMotorClient
+from disnake.utils import MISSING
+
 
 from .cbot import DatBot
 from .ctypes import URL, UUID, LinkTuple
@@ -28,6 +29,6 @@ from .settings import Settings
 from .views import LinkView
 from .ccog import Cog
 
-task = partial(tasks.loop, count=1)
+task = _partial(_tasks.loop, count=1)
 
-__all__ = ("DatBot",)
+__all__ = ("DatBot", "Cog", "Settings")

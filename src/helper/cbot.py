@@ -221,7 +221,6 @@ class DatBot(commands.InteractionBot):
     async def send_exception(self, exception: Exception):
         """Sends error to channel, defaults to logging if unset"""
 
-        # if Settings.bot.error_channel and self._echannel is not  :
         if Settings.bot.error_channel or self._echannel:
             c = Settings.bot.error_channel
             self.log.info(f"Configuring error channel to {c}")
@@ -240,7 +239,6 @@ class DatBot(commands.InteractionBot):
             await c.send(embed=embed)
         else:
             self.log.exception("An error occured")
-            ...
         return error
 
     async def on_connect(self):
@@ -250,7 +248,7 @@ class DatBot(commands.InteractionBot):
         if not self.started:
             self.log.debug("Loading beanie models")
             await init_models(self._db_conn)
-        self.log.info(f"{self.user.display_name}#{self.user.discriminator} is ready!")
+        self.log.info(f"{self.user.name} is ready!")
 
     async def close(self) -> None:
         self.log.info("Shutting down bot!")

@@ -43,7 +43,6 @@ class SnekBoxCog(commands.Cog):
             "/eval", data={"input": code}, timeout=10, raise_for_status=True
         ) as res:
             return await res.json()
-            ...
 
     @commands.message_command(name="Eval")
     async def eval_block(self, inter: CmdInter, message: disnake.Message):

@@ -1,5 +1,4 @@
-# from __future__ import annotations
-from typing import Optional
+from typing import Optional, TypeAlias
 
 import disnake
 
@@ -11,7 +10,8 @@ from .ctypes import LinkTuple
 from .emojis import Emojis
 from .misc import variadic
 
-MesInter = disnake.MessageInteraction
+MesInter: TypeAlias = disnake.MessageInteraction
+CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
 
 
 class BaseView(ui.View):
@@ -75,41 +75,81 @@ class CogSettingsView(BaseView):
         await self.message.delete()
 
 
-# TODO test
-class PaginatorView(ui.View):
+# TODO Ensure stability
+class PaginatorView(BaseView):
+    inter: TypeAlias = disnake.InteractionMessage
+
     def __init__(
-        self, embeds: list[disnake.Embed], message: disnake.Message, inter, timeout=None
+        self,
+        embeds: list[disnake.Embed],
+        author: disnake.User | disnake.Member,
+        message: str,
+        vars: dict,
+        timeout=180,
     ):
         super().__init__(timeout=timeout)
         if not isinstance(embeds, (list, tuple)) or len(embeds) <= 0:
-            raise Exception("")
+            raise Exception("Did not receive a list or tuple!")
         self.embeds = embeds
-        self.message = message
-        self.inter = inter
         self.current_index = 0
-        # self.refresh()
+        self.author = author
+        self.deletable = False  # ensures 2 clicks are required to delete
+        self.message = message
+        self.vars = vars
 
-    def refresh(self):
+    async def update(self):
         embed = self.embeds[self.current_index]
         for item in self.children:
             if isinstance(item, disnake.Embed):
                 self.remove_item(item)
-        self.message.edit(embed=embed)
 
-    @ui.button(emoji="⬅️", style=ButtonStyle.blurple)
+        # disable buttons if at min or max
+        if self.current_index >= len(embed):
+            self.next.disabled = True
+        if self.current_index <= 0:
+            self.next.disabled = True
+
+        self.vars.update({"current_index": self.current_index})
+
+        await self.inter.edit(content=self.message.format(**self.vars), embed=embed)
+
+    @ui.button(emoji=Emojis.arrow_left, style=ButtonStyle.blurple)
     async def previous(self, button: ui.Button, inter: MesInter):
+        if inter.author != self.author:
+            return await inter.send("You're not allowed to use this!", delete_after=5)
+
         if self.current_index == 0:
             self.current_index = len(self.embeds) - 1
         else:
             self.current_index -= 1
-        self.refresh()
-        await inter.response.edit_message(embed=self)
 
-    @ui.button(emoji="➡️", style=ButtonStyle.blurple)
+        await inter.send("Previous page", ephemeral=True, delete_after=1)
+        await self.update()
+
+    @ui.button(emoji=Emojis.x, style=ButtonStyle.danger)
+    async def delete_embed(self, button: ui.Button, inter: MesInter):
+        if inter.author != self.author:
+            return await inter.send("You're not allowed to use this!", delete_after=5)
+
+        if not self.deletable:
+            await inter.send(
+                "Click me again to delete!", ephemeral=True, delete_after=5
+            )
+            self.deletable = True
+            return
+        else:
+            await inter.send("Deleting!", delete_after=5.0)
+            await self.inter.delete(delay=5)
+
+    @ui.button(emoji=Emojis.arrow_right, style=ButtonStyle.blurple)
     async def next(self, button: ui.Button, inter: MesInter):
+        if inter.author != self.author:
+            return await inter.send("You're not allowed to use this!", delete_after=5)
+
         if self.current_index == len(self.embeds) - 1:
             self.current_index = 0
         else:
             self.current_index += 1
-        self.refresh()
-        await inter.response.edit_message(view=self)
+
+        await inter.send("Next Page", ephemeral=True, delete_after=1)
+        await self.update()

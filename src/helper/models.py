@@ -72,6 +72,7 @@ class Server(Document):
 
 class DiscordMessage(Document):
     message: str
+    snowflake: int
     author: str
     author_id: int
     timestamp: datetime = Field(default_factory=datetime.now)
@@ -82,6 +83,7 @@ class DiscordMessage(Document):
             message=message.content,
             author=message.author.name,
             author_id=message.author.id,
+            snowflake=message.id,
         )
 
 

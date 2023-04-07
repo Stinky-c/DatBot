@@ -13,6 +13,7 @@ class Cog(commands.Cog):
 
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     log: Logger
+    bot: "DatBot"
     name = "PLACEHOLDER"
 
     def __init__(self, bot: "DatBot") -> None:
