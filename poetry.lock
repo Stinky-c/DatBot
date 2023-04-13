@@ -414,14 +414,14 @@ files = [
 
 [[package]]
 name = "curse-api"
-version = "3.1.0"
+version = "3.1.1"
 description = "A simple curseforge api wrapper"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "curse_api-3.1.0-py3-none-any.whl", hash = "sha256:ac77e9fc4aadf9a0fdfc75e35da67e295a1d4a2082b8ee877e26d4f04e6b2add"},
-    {file = "curse_api-3.1.0.tar.gz", hash = "sha256:53a82e03d82287606fb2ee106cf28d0d6fd752b27e40aebc45618e7e91a3b86a"},
+    {file = "curse_api-3.1.1-py3-none-any.whl", hash = "sha256:35f47ebf14ee31e7eb0a5639bdf61b030098db907afb6ae46abae79965a77f26"},
+    {file = "curse_api-3.1.1.tar.gz", hash = "sha256:c5d3d85e1d155297897807e436aa77e2ed0c31fdf0bfdf778a6879411e1b0b83"},
 ]
 
 [package.dependencies]
@@ -1467,4 +1467,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "d911e7c57a842436c2ad3210d0bb5405e730a08a11037c319569aabe1d32018c"
+content-hash = "432345633d6cf8e702aa3c6f1d4f91193b7ca0e301a36c211d1aad544a0ab6db"
