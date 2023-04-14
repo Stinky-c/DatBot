@@ -181,7 +181,9 @@ class DatBot(commands.InteractionBot):
         )
 
     async def make_http(self, name: str, *args, **kwargs) -> aiohttp.ClientSession:
-        """Make a aiohttp session and register the closing functions"""
+        """Make a aiohttp session and register the closing functions
+        logger name: `cog.{name}.http`
+        """
         logger = self.get_logger(f"cog.{name}.http")
 
         async def on_request_end(

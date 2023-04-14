@@ -85,7 +85,7 @@ class PaginatorView(BaseView):
         author: disnake.User | disnake.Member,
         message: str,
         vars: dict,
-        timeout=180,
+        timeout: int = 180,
     ):
         super().__init__(timeout=timeout)
         if not isinstance(embeds, (list, tuple)) or len(embeds) <= 0:
@@ -153,3 +153,37 @@ class PaginatorView(BaseView):
 
         await inter.send("Next Page", ephemeral=True, delete_after=1)
         await self.update()
+
+    @classmethod
+    async def build(
+        cls,
+        inter: CmdInter,
+        embeds: list[disnake.Embed],
+        author: disnake.User | disnake.Member,
+        message: str,
+        vars: dict,
+        timeout: int = 180,
+    ):
+        """
+        Builds the view, running other required steps after creation
+        Parameters
+        ----------
+        inter: Interaction
+        embeds: A list of embeds to cycle through
+        author: Author object to bind button clicks to
+        message: The message to send with an embed
+        vars: Varibles to add for message usage
+        timeout: when view timesout
+        """
+        view = cls(
+            embeds=embeds,
+            author=author,
+            message=message,
+            vars=vars,
+            timeout=timeout,
+        )
+
+        await inter.send(view=view)
+        view.inter = await inter.original_response()
+        await view.update()
+        return view

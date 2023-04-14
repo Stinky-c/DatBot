@@ -87,6 +87,18 @@ class DiscordMessage(Document):
         )
 
 
+class CurseForgeMod(Document):
+    # TODO: figure out how to do this
+    # name: str
+    hooks: Optional[list[str]]  # a list of webhook urls, use `webhooks`
+    projectId: int
+    previous: int | None  # Compare to previous `mod.latestFilesIndexes[0].fileId`
+
+    def webhooks(self, session: aiohttp.ClientSession, token: str = None):
+        for hook in self.hooks:
+            yield disnake.Webhook.from_url(hook, session=session, bot_token=token)
+
+
 # Piston
 class PistonFile(BaseModel):
     name: Optional[str]
@@ -149,7 +161,7 @@ class Location(BaseModel):
 
 
 DocumentModels_discord = [User, Server, DiscordMessage]
-DocumentModels_data = [Quote]
+DocumentModels_data = [Quote, CurseForgeMod]
 
 
 async def init_models(db: AsyncIOMotorClient):

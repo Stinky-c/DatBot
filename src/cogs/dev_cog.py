@@ -2,6 +2,7 @@ import collections
 import json
 import platform as plat
 
+from datetime import datetime
 import disnake
 import psutil
 from disnake.ext import commands
@@ -44,6 +45,11 @@ class DevCog(commands.Cog):
         """Stops the bot"""
         await inter.send(await gen_quote())
         await self.bot.close()
+
+    @cmd.sub_command("echo")
+    async def echo_(self, inter: CmdInter, message: str):
+        await inter.send("Done!", ephemeral=True)
+        await inter.channel.send(message)
 
     @cmd.sub_command("info")
     async def info_(self, inter: CmdInter):
@@ -268,6 +274,23 @@ class DevCog(commands.Cog):
                 else 0xE74C3C,
             }
             return await inter.send(embed=disnake.Embed.from_dict(embed))
+
+    @cmd.sub_command("timestamp")
+    async def timestamp_(
+        self,
+        inter: CmdInter,
+        timestamp: int,
+        format: disnake.utils.TimestampStyle = "f",
+    ):
+        """
+        Given a unix timestamp, attempts to return a parsed time
+        Parameters
+        ----------
+        timestamp: A unix timestamp
+        format: A discord timestamp style
+        """
+        dt = datetime.fromtimestamp(timestamp)
+        await inter.send(disnake.utils.format_dt(dt, style=format))
 
     @cmd.sub_command_group("quote")
     async def quote_(self, inter: CmdInter):

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datbot"
-version = "0.5.0"
+version = "0.5.1"
 description = "Another generic multi purpose discord bot"
 authors = ["Stinky-c <60587749+Stinky-c@users.noreply.github.com>"]
 
@@ -14,7 +14,7 @@ psutil = "^5.9.4"
 beanie = "^1.18.0"
 aiodns = "^3.0.0"
 orjson = "^3.8.7"
-curse-api = "^3.1.0"
+curse-api = "^3.1.1"
 mafic = "^2.0.1"
 
 
