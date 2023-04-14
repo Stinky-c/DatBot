@@ -74,12 +74,12 @@ class DevCog(commands.Cog):
                 },
                 {
                     "name": "Memory Usage",
-                    "value": f"{bytes2human(vmem.used)}MB/{bytes2human(vmem.available)}",
+                    "value": f"{bytes2human(vmem.used)}/{bytes2human(vmem.available)}",
                     "inline": True,
                 },
                 {
                     "name": "Disk Usage",
-                    "value": f"{bytes2human(duse.used)}MB/{bytes2human(duse.total)}",
+                    "value": f"{bytes2human(duse.used)}/{bytes2human(duse.total)}",
                     "inline": True,
                 },
                 {
