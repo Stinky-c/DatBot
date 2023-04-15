@@ -4,10 +4,11 @@ import orjson
 import disnake
 from aiohttp import ClientResponseError
 from curse_api import CurseAPI
-from curse_api.enums import Games, SortOrder
+from curse_api.enums import Games, SortOrder, ModLoaderType, ModsSearchSortField
 from curse_api.models import Mod, File
+from curse_api.categories import CATEGORIES
 from curse_api.ext import ManifestParser
-from disnake.ext import commands, tasks
+from disnake.ext import commands
 from disnake.utils import format_dt
 from helper import Cog, CogLoadingFailure, DatBot, Settings
 from helper.ctypes import AiohttpCurseClient
@@ -43,8 +44,8 @@ class CurseForgeCog(Cog):
         c2 = AiohttpCurseClient(http)
         self.api = CurseAPI(c2)
         self.parser = ManifestParser(self.api)
-
         self.http = await self.bot.make_http(self.name + "_webhook")
+        # webhook http client
 
     @commands.slash_command(name=name)
     async def cmd(self, inter: CmdInter):
@@ -129,7 +130,7 @@ class CurseForgeCog(Cog):
 
         await inter.send(
             embed=self.embed_from_mod(mod), view=LinkView(*links)
-        )  # `LinkView` should take both iterable and non-iterable
+        )  # TODO: `LinkView` should take both iterable and non-iterable
 
     @cmd.sub_command("search")
     async def from_search(
@@ -137,49 +138,58 @@ class CurseForgeCog(Cog):
         inter: CmdInter,
         slug: str = None,
         search: str = None,
-        gameid: int = Games.minecraft.value,
+        game: int = Games.minecraft.value,
+        category: int = None,
+        sortorder: SortOrder = SortOrder.Descending.value,
+        modloadertype: ModLoaderType = None,
+        modsearchsort: ModsSearchSortField = ModsSearchSortField.Popularity.value,
         index: int = 0,
         pagesize: int = 50,
-        sortorder: SortOrder = SortOrder.Descending.value
-        # game: Games = Games.minecraft,
     ):
         """
-        Searches for a mod on curseforge
-
+        Searches for a mod on curseforge, game and category are autocomplete filters. Unless noted all fields default to None
         Parameters
         ----------
-        search: The text filter to search for
-        gameid: gameid to filter by
-        index: index to start searching at
-        pagesize: max page size
+        slug: search by addon slug.
+        search: search by text.
+        game: Curseforge game to filter by. Defaults to Minecraft
+        category: Game category to filter by.
+        sortorder: Direction to sort from. Defaults to Descending
+        modloadertype: Minecraft mod loaders filter.
+        modsearchsort: Sort method to search by. Defaults to Popularity
+        index: search result to start at. Defaults to 0
+        pagesize: max amount of results. Defaults to 50
         """
-        # TODO:
-        # add game autocomplete?
-        # add index & page
-        game = Games(gameid)
+        # TODO: More fine grained filters
+        gameobj = Games(game)
+        categoryobj = CATEGORIES.get(gameobj)(category) if category else None
         await inter.response.defer()
         try:
-            mods, page = await self.api.search_mods(
-                game,
+            mods, _ = await self.api.search_mods(
+                gameobj,
                 searchFilter=search,
                 slug=slug,
                 index=index,
                 pageSize=pagesize,
                 sortOrder=sortorder,
+                classId=categoryobj,
+                modLoaderType=modloadertype,
+                sortField=modsearchsort,
             )
         except ClientResponseError as e:
             await self.bot.send_exception(e)
             return await inter.send("An error occured!")
+
         count = len(mods)
         if count <= 0:  # ensure mods are found
-            return await inter.send("No mods were found")
+            return await inter.send(f"No mods were found for {gameobj.name}")
 
-        view = await PaginatorView.build(
+        await PaginatorView.build(
             inter=inter,
             embeds=[self.embed_from_mod(i) for i in mods],
             author=inter.author,
-            message="I have found {count} mods to show you\n{current_index}/{count}",
-            vars={"count": count - 1},
+            message="I have found {count} mods to show you\n{offset_index}/{count}",
+            vars={"count": count},
         )
 
     @cmd.sub_command("manifest")
@@ -195,12 +205,12 @@ class CurseForgeCog(Cog):
         if count <= 0:  # ensure mods are found
             return await inter.send("No mods were found")
 
-        view = await PaginatorView.build(
+        await PaginatorView.build(
             inter=inter,
             embeds=[self.embed_from_mod(mod) for mod in mods],
             author=inter.author,
-            message="{count} files found!\n{current_index}/{count}",
-            vars={"count": count - 1},
+            message="{count} files found!\n{offset_index}/{count}",
+            vars={"count": count},
         )
 
     # Curseforge Update notifier
@@ -249,6 +259,37 @@ class CurseForgeCog(Cog):
             for hook in t.webhooks(self.http):
                 embed = self.embed_from_mod(i)
                 await hook.send("A new file has been uploaded!", embed=embed)
+
+    @from_search.autocomplete("game")
+    async def _autocomplete_game(self, inter: CmdInter, input: str):
+        name = input.lower()
+        x = {
+            v.name: v for v in list(Games._value2member_map_.values()) if name in v.name
+        }
+        # search for category and limit to 25 items
+        z = {k: v for k, v in list(x.items())[:24]}
+        self.log.debug(z)
+        return z
+
+    @from_search.autocomplete("category")
+    async def _autocomplete_game(self, inter: CmdInter, input: str):
+        gameOption = inter.filled_options.get("game", 432)
+        # assume searching category of minecraft
+
+        if type(gameOption) == str:
+            return {}  # return if not a valid interger
+        game = Games(gameOption)
+        category = CATEGORIES.get(game)
+
+        x = {
+            v.name: v
+            for v in list(category._value2member_map_.values())
+            if input in v.name
+        }
+        # search for category and limit to 25 items
+        z = {k: v for k, v in list(x.items())[:24]}
+        self.log.debug(z)
+        return z
 
 
 def setup(bot: DatBot):
