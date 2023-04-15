@@ -75,7 +75,6 @@ class CogSettingsView(BaseView):
         await self.message.delete()
 
 
-# TODO Ensure stability
 class PaginatorView(BaseView):
     inter: TypeAlias = disnake.InteractionMessage
 
@@ -102,14 +101,13 @@ class PaginatorView(BaseView):
         for item in self.children:
             if isinstance(item, disnake.Embed):
                 self.remove_item(item)
-
-        # disable buttons if at min or max
-        if self.current_index >= len(embed):
-            self.next.disabled = True
-        if self.current_index <= 0:
-            self.next.disabled = True
-
-        self.vars.update({"current_index": self.current_index})
+        # update varibles for message
+        self.vars.update(
+            {
+                "current_index": self.current_index,
+                "offset_index": self.current_index + 1,
+            }
+        )
 
         await self.inter.edit(content=self.message.format(**self.vars), embed=embed)
 

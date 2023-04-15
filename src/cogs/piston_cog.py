@@ -20,7 +20,7 @@ FORMATTED_CODE_REGEX = re.compile(
 
 
 class PistonCog(commands.Cog):
-    CmdInter:TypeAlias = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "piston"
     key_enabled = False

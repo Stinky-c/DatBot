@@ -9,6 +9,7 @@ Modulo: %
 Power: **
 
 Functions:
+absolute value: abs(-3)
 logarithm (base ten): log10(x)
 logarithm (default e): log(x,base)
 Square Root: sqrt(x)
@@ -20,4 +21,5 @@ deg (radians -> degrees): deg(x)
 greatest common divisor (WIP): gcd([x,y,z])
 least common multiple (WIP): lcm([x,y,z])
 round: round(x,n)
+
 ```"""

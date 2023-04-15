@@ -5,7 +5,7 @@ RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends $APT_INSTALL $APT_INSTALL_REMOVABLE \
     && apt-get autoremove -y
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip --no-cache-dir
 WORKDIR /app/
 
 

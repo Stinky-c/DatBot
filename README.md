@@ -15,6 +15,7 @@ More work features and functions coming later.
 - Fix watchdog
     - double reloading
     - not watching helper
+- Document current cogs
 
 ## Quick Start
 

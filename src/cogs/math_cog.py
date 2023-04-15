@@ -2,7 +2,7 @@ import ast
 import math
 import operator as op
 import re
-from typing import Callable,  TypeAlias
+from typing import Callable, TypeAlias
 
 import disnake
 from disnake.ext import commands
@@ -22,6 +22,7 @@ math_op = {
     ast.Mod: op.mod,
     # Functions
     ast.Call: {
+        "abs": abs,
         "log10": math.log10,
         "log": math.log,
         "ln": math.log,
@@ -55,6 +56,8 @@ bit_op = {
     ast.RShift: op.rshift,
 }
 
+math_constants = {"pi": math.pi, "e": math.e}
+
 op_table = {
     "?": math_op,
     "b": bit_op,
@@ -62,8 +65,6 @@ op_table = {
 }
 
 
-# TODO: support basic functions like
-# log, abs, and sqrt
 class MathCog(commands.Cog):
     """This is the base cog for creating a new cog"""
 
@@ -102,22 +103,24 @@ class MathCog(commands.Cog):
                 *[self.eval_(i, op_map) for i in node.args],
                 **{o.arg: self.eval_(o, op_map) for o in node.keywords},
             )
-
-        else:
-            return "Invalid expression"
+        elif isinstance(node, ast.Name):
+            val = math_constants.get(node.id)
+            if not val:
+                raise Exception(f"'{node.id}' is unknown")
+            return val
 
     @commands.slash_command(name=name)
     async def cmd(self, inter: CmdInter):
-        """Shows the help message"""  # TODO:
-        embed_dict = {
-            "title": "Math Help",
-            "timestamp": disnake.utils.utcnow().isoformat(),
-            "description": help_message,
-            "color": disnake.Color.random(),
-        }
+        """Shows the help message"""
+        embed = disnake.Embed(
+            title="Math Help",
+            timestamp=disnake.utils.utcnow(),
+            description=help_message,
+            color=disnake.Color.random(),
+        )
         await inter.send(
             "To get started post a math equation in the form of `` `<math>`??`` to evaulate\n please note some major changes",
-            embed=disnake.Embed.from_dict(embed_dict),
+            embed=embed,
         )
 
     @commands.Cog.listener(disnake.Event.message)

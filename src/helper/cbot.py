@@ -91,7 +91,6 @@ class DatBot(commands.InteractionBot):
             strict_localization=strict_localization,
         )
         # set up logging
-        # TODO add options to configure other handlers
         for k, v in bot_config.logging:
             if v is None:
                 continue
@@ -260,7 +259,7 @@ class DatBot(commands.InteractionBot):
         await super().close()
 
 
-class LavaPlayer(Player[DatBot]):  # TODO: new name
+class LavaPlayer(Player[DatBot]):
     managed: disnake.TextChannel
     queue: list[Track]
 

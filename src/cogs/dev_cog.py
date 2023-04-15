@@ -260,20 +260,17 @@ class DevCog(commands.Cog):
     @cmd.sub_command("status")
     async def status_(self, inter: CmdInter):
         """Checks discord status and returns the state"""
-        # TODO: make it look nicer
         url = "https://discordstatus.com/api/v2/status.json"
         async with self.httpclient.get(url) as req:
             if req.status != 200:
                 return await inter.send("Discord Status page returned a non 200")
             data: dict = await req.json()
-            embed = {
-                "title": "Discord Status",
-                "description": data["status"]["description"],
-                "color": 0x2ECC71
-                if data["status"]["indicator"] == "none"
-                else 0xE74C3C,
-            }
-            return await inter.send(embed=disnake.Embed.from_dict(embed))
+            embed = disnake.Embed(
+                title="Discord Status",
+                description=data["status"]["description"],
+                color=0x2ECC71 if data["status"]["indicator"] == "none" else 0xE74C3C,
+            )
+            return await inter.send(embed=embed)
 
     @cmd.sub_command("timestamp")
     async def timestamp_(
@@ -304,7 +301,6 @@ class DevCog(commands.Cog):
         quote: a new qoute to add to the database
         """
 
-        # TODO maybe add tags?
         q = await Quote(quote=quote).create()
         await inter.send(f"Quote created and Saved\n`{q.id}`")
 

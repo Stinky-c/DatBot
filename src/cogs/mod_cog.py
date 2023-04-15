@@ -83,10 +83,10 @@ class ModerationCog(Cog):
                 await server.pinChannel_webhook(self.webhook_http).delete(
                     reason="Pin Channel webhook has been moved"
                 )
-            except disnake.errors.NotFound:  # TODO: find if there are more errors possible
+            except disnake.errors.NotFound:
                 await inter.send("Preconfigured webhook missing, skipping")
             except Exception:
-                await inter.send("Unknown error removing old webhook, skipping")
+                await inter.send("Unknown error while removing old webhook, skipping")
 
         hook = await channel.create_webhook(name="Pin Channel Webhook")
         server.pinChannel = hook.url

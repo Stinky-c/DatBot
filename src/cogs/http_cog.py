@@ -7,7 +7,7 @@ from typing import TypeAlias
 
 
 class HTTPCog(commands.Cog):
-    CmdInter:TypeAlias = disnake.ApplicationCommandInteraction
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "http"
 

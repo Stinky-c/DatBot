@@ -44,7 +44,7 @@ def toml_source(settings: BaseSettings) -> dict[Any, Any]:
 
 
 class LoggerConfig(BaseModel):
-    logfile: Optional[Path]  = None
+    logfile: Optional[Path] = None
     format: str = "{asctime:20} | {levelname:^7} | {name:15} | {message}"
     level: LoggingLevels = LoggingLevels.INFO
     encoding: str = "utf-8"
@@ -85,25 +85,19 @@ class BotConfig(BaseModel):
     owner_ids: Optional[tuple[int]]
     test_guilds: Optional[List[int]]
     dev_guilds: Optional[List[int]]
-    cogs: List[str] = Field(  # TODO find way to exlclude from schema
+    cogs: List[str] = Field(
         default_factory=lambda: cogs_factory("*_cog.py"),
         exclude=True,
     )
-    disabled_cogs: List[str] = Field(  # TODO find way to exlclude from schema
+    disabled_cogs: List[str] = Field(
         default_factory=lambda: cogs_factory("*_disabled.py"),
         exclude=True,
     )
-    error_channel: int | bool = False # TODO: either false or int
+    error_channel: int | bool = False
 
 
 class DevConfig(BaseModel):
     # TODO maybe?
-    ...
-
-
-# TODO make api string class
-# hidden when logging but not when dumping config
-class Key(str):
     ...
 
 
