@@ -147,7 +147,7 @@ class CurseForgeCog(Cog):
         pagesize: int = 50,
     ):
         """
-        Searches for a mod on curseforge, game and category are autocomplete filters. Unless noted all fields default to None
+        Searches for a mod on curseforge by game and category. All fields default to None unless noted.
         Parameters
         ----------
         slug: search by addon slug.
@@ -260,6 +260,7 @@ class CurseForgeCog(Cog):
                 embed = self.embed_from_mod(i)
                 await hook.send("A new file has been uploaded!", embed=embed)
 
+    # Autocompleters
     @from_search.autocomplete("game")
     async def _autocomplete_game(self, inter: CmdInter, input: str):
         name = input.lower()
