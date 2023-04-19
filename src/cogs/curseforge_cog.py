@@ -267,7 +267,7 @@ class CurseForgeCog(Cog):
         x = {
             v.name: v for v in list(Games._value2member_map_.values()) if name in v.name
         }
-        # search for category and limit to 25 items
+        # search for game and limit to 25 items
         z = {k: v for k, v in list(x.items())[:24]}
         self.log.debug(z)
         return z

@@ -38,3 +38,5 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/stinky-c/datbot:${{ steps.short_sha.outputs.short_sha }},ghcr.io/stinky-c/datbot:latest
+          build-args: |
+            VERSION:${{ steps.short_sha.outputs.short_sha }}
