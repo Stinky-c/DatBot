@@ -1,10 +1,5 @@
 FROM python:3.11.2-slim AS install
 
-
-ARG VERSION=dev
-LABEL org.opencontainers.image.source="https://github.com/Stinky-c/DatBot"
-LABEL org.opencontainers.image.version=$VERSION
-
 ARG APT_INSTALL_REMOVABLE="curl"
 ARG APT_INSTALL=""
 RUN apt-get update \
