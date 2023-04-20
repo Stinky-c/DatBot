@@ -158,8 +158,8 @@ class PaginatorView(BaseView):
         inter: CmdInter,
         embeds: list[disnake.Embed],
         author: disnake.User | disnake.Member,
-        message: str,
         vars: dict,
+        message: str = "{offset_index}/{count}",
         timeout: int = 180,
     ):
         """

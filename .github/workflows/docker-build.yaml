@@ -40,4 +40,4 @@ jobs:
           tags: ghcr.io/stinky-c/datbot:${{ steps.short_sha.outputs.short_sha }},ghcr.io/stinky-c/datbot:latest
           labels: |
             org.opencontainers.image.version=${{ steps.short_sha.outputs.short_sha }}
-            org.opencontainers.image.source="https://github.com/Stinky-c/DatBot"
+            org.opencontainers.image.source=https://github.com/Stinky-c/DatBot

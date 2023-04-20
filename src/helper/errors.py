@@ -30,3 +30,9 @@ class InvalidStatment(MathError):
 
 class NotAFunction(MathError):
     """The statment contains an unknown functions"""
+
+class NotAName(MathError):
+    """Statement contains unknown symbols"""
+
+class UnknownNode(MathError):
+    """Statement contains unknown nodes"""

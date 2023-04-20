@@ -6,10 +6,15 @@ from typing import Callable, TypeAlias
 
 import disnake
 from disnake.ext import commands
-from helper import DatBot
-from helper.errors import MathError, NotAFunction
-from data.math import help_message
+from helper import DatBot, Cog
+from helper.errors import MathError, NotAFunction, NotAName, UnknownNode
+from helper.views import PaginatorView
+from data.math import help_embeds
 
+# alises
+fact = math.factorial
+
+# AST math operations
 math_op = {
     ast.USub: op.neg,
     # Basic math
@@ -35,9 +40,12 @@ math_op = {
         "gcd": math.gcd,
         "lcm": math.lcm,
         "round": round,
+        "fact": math.factorial,
+        "nPr": lambda n, r: fact(n) / fact(n - r),
+        "nCr": lambda n, r: fact(n) / (fact(r) * fact(n - r)),
     },
 }
-
+# AST Bitwise oOperations
 bit_op = {
     ast.USub: op.neg,
     # basic math
@@ -65,7 +73,7 @@ op_table = {
 }
 
 
-class MathCog(commands.Cog):
+class MathCog(Cog):
     """This is the base cog for creating a new cog"""
 
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
@@ -74,10 +82,6 @@ class MathCog(commands.Cog):
     key_enabled = False
 
     reg = re.compile(r"`(?P<statement>[^`]+)`\?(?P<key>[a-z\?])")
-
-    def __init__(self, bot: DatBot):
-        self.bot = bot
-        self.log = bot.get_logger(f"cog.{self.name}")
 
     async def cog_load(self):
         self.log.debug(f"{self.name} Loading")
@@ -98,7 +102,7 @@ class MathCog(commands.Cog):
         elif isinstance(node, ast.Call):
             a: Callable | None = op_map[type(node)].get(node.func.id)
             if a is None:
-                raise NotAFunction
+                raise NotAFunction(f"'{node.func.id}' is unknown")
             return a(
                 *[self.eval_(i, op_map) for i in node.args],
                 **{o.arg: self.eval_(o, op_map) for o in node.keywords},
@@ -106,29 +110,27 @@ class MathCog(commands.Cog):
         elif isinstance(node, ast.Name):
             val = math_constants.get(node.id)
             if not val:
-                raise Exception(f"'{node.id}' is unknown")
+                raise NotAName(f"'{node.id}' is unknown")
             return val
+        else:
+            raise UnknownNode(type(node))
 
     @commands.slash_command(name=name)
     async def cmd(self, inter: CmdInter):
         """Shows the help message"""
-        embed = disnake.Embed(
-            title="Math Help",
-            timestamp=disnake.utils.utcnow(),
-            description=help_message,
-            color=disnake.Color.random(),
+
+        await PaginatorView.build(
+            inter=inter,
+            embeds=help_embeds,
+            author=inter.author,
+            vars={"count": len(help_embeds)},
         )
-        await inter.send(
-            "To get started post a math equation in the form of `` `<math>`??`` to evaulate\n please note some major changes",
-            embed=embed,
-        )
+        # TODO: pin all custom colors to use seed based on data like author id or returned data
 
     @commands.Cog.listener(disnake.Event.message)
     async def on_message(self, message: disnake.Message):
         content = message.content
         if message.author.bot:
-            # I want to enable bots to use this
-            # chat relays should be able to use this
             return
 
         if not self.reg.search(content):
@@ -137,19 +139,24 @@ class MathCog(commands.Cog):
         for matched in self.reg.finditer(content):
             statement = matched.group("statement")
 
-            # op_map = op_table[matched.group("key")]
             op_map = math_op
             try:
                 solved = self.eval_expr(statement, op_map)
             except NotAFunction:
                 return await message.reply("Unknown Functions", mention_author=False)
-            except SyntaxError:
-                return await message.reply("Failed to parse", mention_author=False)
-
+            except RecursionError:
+                return await message.reply("Too Complex", mention_author=False)
+            except NotAName:
+                return await message.reply("Unknown symbols", mention_author=False)
+            except UnknownNode:
+                return await message.reply("Uknown node", mention_author=False)
+            # Catch all
             except MathError:
                 return await message.reply(
-                    "An unknown error occured", mention_author=False
+                    "An unknown math occured", mention_author=False
                 )
+            except SyntaxError:
+                return await message.reply("Failed to parse", mention_author=False)
             else:
                 await message.reply(
                     f"Statement evaluated: `{solved}`", mention_author=False
