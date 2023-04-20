@@ -58,43 +58,26 @@ class DevCog(commands.Cog):
         vmem = psutil.virtual_memory()
         duse = psutil.disk_usage("/")
         pexe = psutil.Process()
-        embed_dict = {
-            "color": disnake.Color(0x9B42F5),
-            "timestamp": disnake.utils.utcnow().isoformat(),
-            "author": {
-                "name": "System Status",
-                "icon_url": self.bot.user.display_avatar.url,
-            },
-            "fields": [
-                {"name": "OS", "value": plat.system(), "inline": True},
-                {
-                    "name": "CPU Times",
-                    "value": f"Current: {psutil.cpu_percent(0.1)}%",
-                    "inline": True,
-                },
-                {
-                    "name": "Memory Usage",
-                    "value": f"{bytes2human(vmem.used)}/{bytes2human(vmem.available)}",
-                    "inline": True,
-                },
-                {
-                    "name": "Disk Usage",
-                    "value": f"{bytes2human(duse.used)}/{bytes2human(duse.total)}",
-                    "inline": True,
-                },
-                {
-                    "name": "Bot Uptime",
-                    "value": disnake.utils.format_dt(pexe.create_time(), "R"),
-                    "inline": True,
-                },
-                {
-                    "name": "Uptime",
-                    "value": disnake.utils.format_dt(psutil.boot_time(), "R"),
-                    "inline": True,
-                },
-            ],
-        }
-        await inter.send(embed=disnake.Embed.from_dict(embed_dict))
+        embed = (
+            disnake.Embed(
+                color=disnake.Color(0x9B42F5),
+                timestamp=disnake.utils.utcnow(),
+                title="System Usage",
+            )
+            .set_author(name="System Status", icon_url=self.bot.user.display_avatar.url)
+            .add_field("OS", plat.system())
+            .add_field("CPU Times", f"Current: {psutil.cpu_percent(0.1)}%")
+            .add_field(
+                "Memory Usage",
+                f"{bytes2human(vmem.used)}/{bytes2human(vmem.available)}",
+            )
+            .add_field(
+                "Disk Usage", f"{bytes2human(duse.used)}/{bytes2human(duse.total)}"
+            )
+            .add_field("Bot Uptime", disnake.utils.format_dt(pexe.create_time(), "R"))
+            .add_field("Uptime", disnake.utils.format_dt(psutil.boot_time(), "R"))
+        )
+        await inter.send(embed=embed)
 
     @cmd.sub_command("cog")
     async def cSettings_(

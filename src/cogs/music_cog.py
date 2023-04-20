@@ -271,33 +271,24 @@ class LavaLinkCog(commands.Cog):
     @dev_.sub_command("current")
     async def current_(self, inter: CmdInter, vc: LavaPlayer):
         """Returns info about the guild player."""
-        embed_dict = {
-            "title": f"'{vc.guild!s}' Statistics",
-            "fields": [
-                {"name": "Node", "value": vc.node.label},
-                {"name": "Ping", "value": vc.ping},
-                {"name": "Queue length", "value": len(vc.queue)},
-                {"name": "Last update", "value": str(vc._last_update)},
-                {"name": "Playing?", "value": bool(vc.current)},
-                {
-                    "name": "Position",
-                    "value": f"{round(vc._position/1000/60,2)}/{round(vc.current.length/1000/60,2)}",
-                },
-            ],
-            "timestamp": disnake.utils.utcnow().isoformat(),
-        }
+        embed = (
+            disnake.Embed(
+                title=f"'{vc.guild!s}' Statistics",
+                timestamp=disnake.utils.utcnow().isoformat(),
+                color=disnake.Color.random(vc.current.id),
+            )
+            .add_field("Node", vc.node.label)
+            .add_field("Ping", vc.ping)
+            .add_field("Queue length", len(vc.queue))
+            .add_field("Last update", vc._last_update)
+            .add_field("Playing?", bool(vc.current))
+            .add_field(
+                "Track Position",
+                f"{round(vc.position/1000/60,2)}/{round(vc.current.length/1000/60,2)}",
+            )
+        )
 
-        await inter.send(embed=disnake.Embed.from_dict(embed_dict))
-
-    @dev_.sub_command("eval")
-    async def eval_(self, inter: CmdInter, vc: LavaPlayer, source: str):
-        """Takes a one line statment and evals it in the current scope
-        Parameters
-        ----------
-        source: a string to eval
-        """
-        evaled = eval(source, globals(), locals())
-        await inter.send(cblock(evaled))
+        await inter.send(embed=embed)
 
     @cmd.error
     async def on_error(
