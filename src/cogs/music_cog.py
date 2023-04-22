@@ -89,7 +89,7 @@ class LavaLinkCog(commands.Cog):
             "type": "image",
             "title": track.title,
             "description": track.author or "unknown",
-            "color": disnake.Color.random(),
+            "color": disnake.Color.random(seed=track.identifier),
             "image": {"url": image_url},
             "timestamp": disnake.utils.utcnow().isoformat(),
         }
@@ -275,7 +275,7 @@ class LavaLinkCog(commands.Cog):
             disnake.Embed(
                 title=f"'{vc.guild!s}' Statistics",
                 timestamp=disnake.utils.utcnow().isoformat(),
-                color=disnake.Color.random(vc.current.id),
+                color=disnake.Color.random(seed=vc.current.id),
             )
             .add_field("Node", vc.node.label)
             .add_field("Ping", vc.ping)

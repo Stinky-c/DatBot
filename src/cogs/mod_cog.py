@@ -1,6 +1,6 @@
 import disnake
 from disnake.ext import commands
-from helper import DatBot, Server, Cog
+from helper import DatBot, Server, Cog, LinkTuple
 from typing import TypeAlias
 
 
@@ -58,6 +58,7 @@ class ModerationCog(Cog):
             message.content,
             username=message.author.display_name,
             avatar_url=message.author.avatar.url,
+            components=(LinkTuple("Source", message.jump_url).as_component(),),
         )
         await inter.send("Posted!", ephemeral=True)
 

@@ -5,7 +5,7 @@ help_1 = (
         title="Supported Operations",
         timestamp=utils.utcnow(),
         description="Basic supported math operations",
-        color=Color.random(7 * 2),
+        color=Color.random(seed=14),
     )
     .add_field("Addition", "7+2 = 9")
     .add_field("Subtraction", "9-6 = 3")
@@ -19,7 +19,7 @@ help_2 = (
         title="Supported Functions",
         timestamp=utils.utcnow(),
         description="Supported Math Functions",
-        color=Color.random(6.283185307179586),
+        color=Color.random(seed=6.283185307179586),
     )
     .add_field("Absolute Value", "abs(x)")
     .add_field("Logarithm (base ten)", "log10(x)")

@@ -24,6 +24,9 @@ class LinkTuple(NamedTuple):
     url: str
     emjoi: disnake.Emoji | disnake.PartialEmoji | str = "⛓️"
 
+    def as_component(self):
+        return disnake.ui.Button(label=self.label, url=self.url, emoji=self.emjoi)
+
 
 class URL(HttpUrl):
     def __init__(self, *, url: str) -> None:

@@ -97,8 +97,16 @@ class CurseForgeCog(Cog):
     def LinkTuples_from_mod(cls, mod: Mod) -> list[LinkTuple]:
         # TODO: add iter method to `BaseCurseModel`
         linkTup = []
-        for k, v in mod.links:
-            linkTup.append(LinkTuple(k.capitalize(), v))
+        links = mod.links
+
+        if i := links.issuesUrl:
+            linkTup.append(LinkTuple("Issues", i))
+        if i := links.sourceUrl:
+            linkTup.append(LinkTuple("Source", i))
+        if i := links.websiteUrl:
+            linkTup.append(LinkTuple("Website", i))
+        if i := links.wikiUrl:
+            linkTup.append(LinkTuple("Wiki", i))
 
         return linkTup
 
