@@ -16,6 +16,7 @@ More work features and functions coming later.
     - double reloading
     - not watching helper
 - Document current cogs
+- Ability to disable cogs
 
 ## Cog dependent TODO'S
 

@@ -21,6 +21,7 @@ snekbox = { url = "http://snekbox:8060" }
 piston = { url = "https://emkc.org/" }
 # some optional services that require a key have a `enabled` field
 cfcore = { enabled = false, key = "<Curse Forge API key>" }
+mimic3 = {url="<http mimic3 webserver>"}
 
 
 [dir] # Directories for various cogs

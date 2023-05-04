@@ -62,7 +62,7 @@ def format_time(time: int | float) -> str:
     return disnake.utils.utcnow().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def bytes2human(n):
+def bytes2human(n: int) -> str:
     """Converts int to bytes size"""
     symbols = ("K", "M", "G", "T", "P", "E", "Z", "Y")
     prefix = {}
