@@ -22,7 +22,8 @@ mafic = "^2.1.0"
 black = "^23.3.0"
 poethepoet = "^0.19.0"
 mypy = "^1.2.0"
-ruff = "^0.0.263"
+ruff = "^0.0.265"
+pre-commit = "^3.3.1"
 
 [tool.mypy]
 python_version = "3.11"
@@ -39,6 +40,7 @@ print_result = true
 
 [tool.ruff]
 extend-ignore = ["E501"]
+extend-select = ["F", "E", "W", "I"]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["E402", "F401"]

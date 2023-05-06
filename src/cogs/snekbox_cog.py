@@ -1,9 +1,9 @@
 import re
+from typing import TypeAlias
 
 import disnake
 from disnake.ext import commands
-from helper import CogLoadingFailure, DatBot, Settings
-from typing import TypeAlias
+from helper import CogMetaData, DatBot, Settings
 
 
 class SnekBoxCog(commands.Cog):
@@ -70,8 +70,12 @@ class SnekBoxCog(commands.Cog):
 
 
 def setup(bot: DatBot):
-    if SnekBoxCog.key_enabled and not Settings.keys.get(SnekBoxCog.key_loc):
-        raise CogLoadingFailure(
-            f"Missing `{SnekBoxCog.key_loc}` api key. Disable or provide key"
-        )
     bot.add_cog(SnekBoxCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=SnekBoxCog.name,
+        key=SnekBoxCog.key_loc,
+        require_key=SnekBoxCog.key_enabled,
+    )

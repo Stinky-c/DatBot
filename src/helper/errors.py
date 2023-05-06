@@ -1,8 +1,22 @@
 from typing import Optional
 
+from disnake.ext.commands.errors import ExtensionError
+
+# Bot errors
+
 
 class CogLoadingFailure(Exception):
     """For when you just refuse to load the cog"""
+
+
+class MissingCogMeta(ExtensionError):
+    """An exception raised when an extension does not have a ``metadata`` entry point function."""
+
+    def __init__(self, name: str) -> None:
+        super().__init__(f"Extension {name!r} has no 'metadata' function.", name=name)
+
+
+# RCON errors
 
 
 class ClientNotConnectedError(Exception):
@@ -15,6 +29,9 @@ class IncorrectPasswordError(Exception):
 
 class RCONConnectionError(Exception):
     pass
+
+
+# Math errors
 
 
 class MathError(Exception):
@@ -31,8 +48,10 @@ class InvalidStatment(MathError):
 class NotAFunction(MathError):
     """The statment contains an unknown functions"""
 
+
 class NotAName(MathError):
     """Statement contains unknown symbols"""
+
 
 class UnknownNode(MathError):
     """Statement contains unknown nodes"""

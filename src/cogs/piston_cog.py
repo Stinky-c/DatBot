@@ -1,11 +1,10 @@
 import re
+from typing import TypeAlias
 
 import disnake
 from disnake.ext import commands
-from helper import CogLoadingFailure, DatBot, Settings
+from helper import Cog, CogMetaData, DatBot, Settings
 from helper.models import PistonEvalResponse
-from typing import TypeAlias
-
 
 FORMATTED_CODE_REGEX = re.compile(
     # https://github.com/onerandomusername/monty-python/blob/94c303cc994976739de6bc5465eaacbfc5e7f86e/monty/exts/eval/__init__.py#L30
@@ -19,19 +18,15 @@ FORMATTED_CODE_REGEX = re.compile(
 )
 
 
-class PistonCog(commands.Cog):
+class PistonCog(Cog):
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "piston"
-    key_enabled = False
     key_loc = "piston"
-
-    def __init__(self, bot: DatBot):
-        self.bot = bot
-        self.log = bot.get_logger(f"cog.{self.name}")
-        self.conf: dict = Settings.keys.get(self.key_loc)
+    key_enabled = True
 
     async def cog_load(self):
+        self.conf: dict = Settings.keys.get(self.key_loc)
         base_url = self.conf.get("url", "https://emkc.org/")
         self.client = await self.bot.make_http(self.name, base_url=base_url)
         self.runtimes = await self.runtimes_piston()
@@ -81,8 +76,12 @@ class PistonCog(commands.Cog):
 
 
 def setup(bot: DatBot):
-    if PistonCog.key_enabled and not Settings.keys.get(PistonCog.key_loc):
-        raise CogLoadingFailure(
-            f"Missing `{PistonCog.key_loc}` api key. Disable or provide key"
-        )
     bot.add_cog(PistonCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=PistonCog.name,
+        key=PistonCog.key_loc,
+        require_key=PistonCog.key_enabled,
+    )

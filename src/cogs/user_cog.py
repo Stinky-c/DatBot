@@ -1,14 +1,17 @@
+from typing import TypeAlias
+
 import disnake
 from disnake.ext import commands
-from helper import DatBot, LinkTuple, LinkView
+from helper import Cog, CogMetaData, DatBot, LinkTuple, LinkView
 
 
-class UserCog(commands.Cog):
-    def __init__(self, bot: DatBot):
-        self.bot = bot
+class UserCog(Cog):
+    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+    GuildInter: TypeAlias = disnake.GuildCommandInteraction
+    name = "user"
 
     @commands.user_command(name="View Song")
-    async def spotifysong(self, inter: disnake.CmdInter, user: disnake.Member):
+    async def spotifysong(self, inter: CmdInter, user: disnake.Member):
         if not any(isinstance(x, disnake.Spotify) for x in user.activities):
             await inter.send("That person is not listening to spotify", ephemeral=True)
             return
@@ -76,3 +79,11 @@ class UserCog(commands.Cog):
 
 def setup(bot: DatBot):
     bot.add_cog(UserCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=UserCog.name,
+        key=UserCog.key_loc,
+        require_key=UserCog.key_enabled,
+    )

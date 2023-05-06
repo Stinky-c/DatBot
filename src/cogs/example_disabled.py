@@ -1,7 +1,8 @@
+from typing import TypeAlias
+
 import disnake
 from disnake.ext import commands
-from helper import CogLoadingFailure, DatBot, Settings, Cog
-from typing import TypeAlias
+from helper import Cog, CogMetaData, DatBot
 
 
 class ExampleCog(Cog):
@@ -10,6 +11,7 @@ class ExampleCog(Cog):
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "example"
+    key_loc = None
     key_enabled = False
 
     async def cog_load(self):
@@ -27,8 +29,16 @@ class ExampleCog(Cog):
         Parameters
         ----------
         abc: placeholder"""
-        await inter.response.send_message(f"Pong! {round(self.bot.latency * 1000)}ms")
+        await inter.send(f"Pong! {round(self.bot.latency * 1000)}ms")
 
 
 def setup(bot: DatBot):
     bot.add_cog(ExampleCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=ExampleCog.name,
+        key=ExampleCog.key_loc,
+        require_key=ExampleCog.key_enabled,
+    )

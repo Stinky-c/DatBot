@@ -3,7 +3,17 @@ from typing import TypeAlias
 import disnake
 import mafic
 from disnake.ext import commands
-from helper import CogLoadingFailure, DatBot, Emojis, Settings, cblock, jdumps, uid
+from helper import (
+    Cog,
+    CogLoadingFailure,
+    CogMetaData,
+    DatBot,
+    Emojis,
+    Settings,
+    cblock,
+    jdumps,
+    uid,
+)
 from helper.cbot import LavaPlayer
 
 # TODO: update to use REST based API
@@ -13,7 +23,7 @@ from helper.cbot import LavaPlayer
 # TODO: add url to embed
 
 
-class LavaLinkCog(commands.Cog):
+class LavaLinkCog(Cog):
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "music"
@@ -21,8 +31,7 @@ class LavaLinkCog(commands.Cog):
     key_loc = "music"
 
     def __init__(self, bot: DatBot):
-        self.bot = bot
-        self.log = bot.get_logger(f"cog.{self.name}")
+        super().__init__(bot)
         self.nodes = mafic.NodePool(bot)
 
     async def connect_node(self):
@@ -316,3 +325,11 @@ def setup(bot: DatBot):
     if not Settings.keys.get(LavaLinkCog.key_loc):
         raise CogLoadingFailure(f"Missing `{LavaLinkCog.name}` configuration.")
     bot.add_cog(LavaLinkCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=LavaLinkCog.name,
+        key=LavaLinkCog.key_loc,
+        require_key=LavaLinkCog.key_enabled,
+    )

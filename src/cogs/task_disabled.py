@@ -1,7 +1,8 @@
+from typing import TypeAlias
+
 import disnake
 from disnake.ext import commands
-from helper import DatBot, Settings, task
-from typing import TypeAlias
+from helper import DatBot, task
 
 
 class ExampleCog(commands.Cog):

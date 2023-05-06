@@ -1,12 +1,12 @@
-from typing import NamedTuple, Optional, Dict, Any, AsyncIterator
+from dataclasses import dataclass
+from typing import Any, AsyncIterator, Dict, NamedTuple, Optional
 from uuid import UUID as UUID_
 
+import aiohttp
 import disnake
+from curse_api.abc import APIFactory
 from disnake.ext import commands
 from pydantic import HttpUrl
-from curse_api.abc import APIFactory
-import aiohttp
-
 
 CmdInter = disnake.CommandInteraction
 
@@ -45,6 +45,13 @@ class UUID(UUID_):
         except ValueError as e:
             await inter.send("Invalid UUID")
             raise e
+
+
+@dataclass()
+class CogMetaData:
+    name: str
+    require_key: bool
+    key: Optional[str]
 
 
 class AiohttpCurseClient(APIFactory):

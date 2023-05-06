@@ -1,11 +1,10 @@
-from typing import Optional, TypeAlias
+from typing import TypeAlias
 
 import disnake
 
 # from disnake.ext import commands
 from disnake import ButtonStyle, ui
 
-from .cbot import DatBot
 from .ctypes import LinkTuple
 from .emojis import Emojis
 from .misc import variadic
@@ -38,41 +37,6 @@ class LinkView(ui.View):
                     style=ButtonStyle.link,
                 )
             )
-
-
-class CogSettingsView(BaseView):
-    def __init__(
-        self,
-        *,
-        message: disnake.InteractionMessage,
-        cog: str,
-        bot: DatBot,
-        timeout: Optional[float] = 180,
-    ):
-        super().__init__(timeout=timeout)
-        self.bot = bot
-        self.message = message
-        self.cog = cog
-
-    @property
-    def get_cog(self):
-        return self.bot.get_cog(self.cog)
-
-    @ui.button(style=ButtonStyle.red, label="Unload Cog")
-    async def unload_(self, button: ui.Button, message: MesInter):
-        await message.response.defer()
-        self.bot.unload_extension(self.cog)
-        await message.send(f"`{self.cog}` unloaded", delete_after=4.0)
-
-    @ui.button(style=ButtonStyle.green, label="Load Cog")
-    async def load_(self, button: ui.Button, message: MesInter):
-        await message.response.defer()
-        self.bot.load_extension(self.cog)
-        await message.send(f"`{self.cog}` loaded", delete_after=4.0)
-
-    @ui.button(style=ButtonStyle.red, label="Close", emoji=Emojis.cross)
-    async def remove_(self, button: ui.Button, message: MesInter):
-        await self.message.delete()
 
 
 class PaginatorView(BaseView):

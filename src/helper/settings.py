@@ -4,7 +4,7 @@ from enum import IntEnum
 from glob import glob
 from os import environ
 from pathlib import Path
-from typing import Any, DefaultDict, List, Optional, Generator
+from typing import Any, DefaultDict, Generator, List, Optional
 
 import disnake
 import toml
@@ -89,16 +89,7 @@ class BotConfig(BaseModel):
         default_factory=lambda: cogs_factory("*_cog.py"),
         exclude=True,
     )
-    disabled_cogs: List[str] = Field(
-        default_factory=lambda: cogs_factory("*_disabled.py"),
-        exclude=True,
-    )
     error_channel: int | bool = False
-
-
-class DevConfig(BaseModel):
-    # TODO maybe?
-    ...
 
 
 class Directory(BaseModel):
@@ -108,8 +99,7 @@ class Directory(BaseModel):
 
 
 class Patches(BaseModel):
-    wavelink: bool = False
-    mafic: bool = True
+    ...
 
 
 class BotSettings(BaseSettings):

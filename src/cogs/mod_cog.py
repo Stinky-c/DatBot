@@ -1,7 +1,8 @@
+from typing import TypeAlias
+
 import disnake
 from disnake.ext import commands
-from helper import DatBot, Server, Cog, LinkTuple
-from typing import TypeAlias
+from helper import Cog, CogMetaData, DatBot, LinkTuple, Server
 
 
 class ModerationCog(Cog):
@@ -97,3 +98,11 @@ class ModerationCog(Cog):
 
 def setup(bot: DatBot):
     bot.add_cog(ModerationCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=ModerationCog.name,
+        key=ModerationCog.key_loc,
+        require_key=ModerationCog.key_enabled,
+    )

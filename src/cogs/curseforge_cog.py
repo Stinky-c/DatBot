@@ -1,16 +1,16 @@
 from typing import TypeAlias
-import orjson
 
 import disnake
+import orjson
 from aiohttp import ClientResponseError
 from curse_api import CurseAPI
-from curse_api.enums import Games, SortOrder, ModLoaderType, ModsSearchSortField
-from curse_api.models import Mod, File
 from curse_api.categories import CATEGORIES
+from curse_api.enums import Games, ModLoaderType, ModsSearchSortField, SortOrder
 from curse_api.ext import ManifestParser
+from curse_api.models import File, Mod
 from disnake.ext import commands
 from disnake.utils import format_dt
-from helper import Cog, CogLoadingFailure, DatBot, Settings
+from helper import Cog, CogLoadingFailure, CogMetaData, DatBot, Settings
 from helper.ctypes import AiohttpCurseClient
 from helper.emojis import CurseforgeEmojis as Emojis
 from helper.models import CurseForgeMod
@@ -23,11 +23,12 @@ class CurseForgeCog(Cog):
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "curseforge"
-    key = "cfcore"
+    key_loc = "cfcore"
+    key_enabled = True
 
     async def cog_load(self):
         self.log.debug(f"{self.name} Loading")
-        conf: dict[str, str] = Settings.keys.get(self.key)
+        conf: dict[str, str] = Settings.keys.get(self.key_loc)
         key = conf.get("key")
         url = conf.get("url")
         # Curse api - API wrapper is a consumer of a client
@@ -275,7 +276,7 @@ class CurseForgeCog(Cog):
     @from_search.autocomplete("category")
     async def _autocomplete_game(self, inter: CmdInter, input: str):
         gameOption = inter.filled_options.get("game", 432)
-        # assume searching category of minecraft
+        # assume searching category of minecraft by default
 
         if type(gameOption) == str:
             return {}  # return if not a valid interger
@@ -294,9 +295,17 @@ class CurseForgeCog(Cog):
 
 
 def setup(bot: DatBot):
-    conf: dict | None = Settings.keys.get(CurseForgeCog.key)
+    conf: dict | None = Settings.keys.get(CurseForgeCog.key_loc)
     if not conf:
-        raise CogLoadingFailure(f"Missing '{CurseForgeCog.key}' key")
+        raise CogLoadingFailure(f"Missing '{CurseForgeCog.key_loc}' key")
     if not conf.get("enabled"):
         return
     bot.add_cog(CurseForgeCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=CurseForgeCog.name,
+        key=CurseForgeCog.key_loc,
+        require_key=CurseForgeCog.key_enabled,
+    )

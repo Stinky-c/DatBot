@@ -1,36 +1,33 @@
 import collections
 import json
 import platform as plat
-
 from datetime import datetime
+from typing import TypeAlias
+
 import disnake
 import psutil
 from disnake.ext import commands
 from helper import (
     UUID,
+    Cog,
+    CogMetaData,
     DatBot,
     Emojis,
     LinkTuple,
     LinkView,
     Settings,
+    bytes2human,
     gen_quote,
     jdumps,
-    bytes2human,
 )
 from helper.models import Quote
-from helper.views import CogSettingsView
-from typing import TypeAlias
 
 
-class DevCog(commands.Cog):
+class DevCog(Cog):
     description = "This cog is filled with useful dev commands"
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "dev"
-
-    def __init__(self, bot: DatBot):
-        self.bot = bot
-        self.log = bot.get_logger(f"cog.{self.name}")
 
     async def cog_load(self) -> None:
         self.httpclient = await self.bot.make_http(self.name)
@@ -78,17 +75,6 @@ class DevCog(commands.Cog):
             .add_field("Uptime", disnake.utils.format_dt(psutil.boot_time(), "R"))
         )
         await inter.send(embed=embed)
-
-    @cmd.sub_command("cog")
-    async def cSettings_(
-        self, inter: CmdInter, cog: str = commands.Param(choices=Settings.bot.cogs)
-    ):
-        """Returns a UI for changing cog settings"""
-        await inter.response.defer()
-        view = CogSettingsView(
-            bot=self.bot, message=await inter.original_response(), cog=cog
-        )
-        await inter.send(f"Configure `{cog}`", view=view, ephemeral=True)
 
     @cmd.sub_command("unload")
     async def unload_(
@@ -338,3 +324,11 @@ class DevCog(commands.Cog):
 
 def setup(bot: DatBot):
     bot.add_cog(DevCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=DevCog.name,
+        key=DevCog.key_loc,
+        require_key=DevCog.key_enabled,
+    )

@@ -1,21 +1,25 @@
 """Contains all code accustom to various functionality of the bot"""
+import importlib
 import logging
 import signal
 import sys
+import traceback
 from asyncio import AbstractEventLoop
-from types import SimpleNamespace
-from typing import Coroutine, Optional, Sequence
+from types import MappingProxyType, SimpleNamespace
+from typing import Coroutine, Mapping, Optional, Sequence
 
 import aiohttp
 import disnake
 from disnake.ext import commands
+from disnake.ext.commands import errors as derrors
 from mafic import Player, Track
 from motor.motor_asyncio import AsyncIOMotorClient
-import traceback
 
+from . import errors
+from .ctypes import CogMetaData
+from .misc import cblock
 from .models import init_models
 from .settings import BotSettings, LoggingLevels, Settings
-from .misc import cblock
 
 MISSING = disnake.utils.MISSING
 
@@ -26,6 +30,7 @@ class DatBot(commands.InteractionBot):
     clog: logging.Logger
     closeList: list[tuple[str, Coroutine]]
     _echannel: disnake.TextChannel = None
+    __extensions_meta: dict[str, CogMetaData] = {}
 
     def __init__(
         self,
@@ -257,6 +262,48 @@ class DatBot(commands.InteractionBot):
             self.log.info(f"running '{name}' Close coroutine")
             await close
         await super().close()
+
+    def _load_meta_from_module_spec(
+        self, spec: importlib.machinery.ModuleSpec, key: str
+    ) -> None:
+        """Extend `bot.load_extension` for metadata about cog"""
+        lib = importlib.util.module_from_spec(spec)
+        sys.modules[key] = lib
+        try:
+            spec.loader.exec_module(lib)  # type: ignore
+        except Exception as e:
+            del sys.modules[key]
+            raise derrors.ExtensionFailed(key, e) from e
+
+        try:
+            meta = lib.metadata
+        except AttributeError:
+            del sys.modules[key]
+            raise errors.MissingCogMeta(key)
+
+        try:
+            result = meta(self)
+        except Exception as e:
+            del sys.modules[key]
+            self._remove_module_references(lib.__name__)
+            self._call_module_finalizers(lib, key)
+            raise derrors.ExtensionFailed(key, e) from e
+        else:
+            return result
+
+    def load_extension_meta(self, name: str) -> CogMetaData:
+        """Loads extension meta data, similar to `CommonBotBase.load_extension`"""
+
+        self.extensions
+        spec = importlib.util.find_spec(name)
+        if spec is None:
+            raise derrors.ExtensionNotFound(name)
+        return self._load_meta_from_module_spec(spec, name)
+
+    @property
+    def extensions_meta(self) -> Mapping[str, CogMetaData]:
+        """A read-only mapping of extension name to extension metadata."""
+        return MappingProxyType(self.__extensions_meta)
 
 
 class LavaPlayer(Player[DatBot]):

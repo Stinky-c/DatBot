@@ -1,11 +1,11 @@
 import random
 from functools import partial
+from typing import TypeAlias
 
 import disnake
 from disnake.ext import commands
-from helper import DatBot, Cog
+from helper import Cog, CogMetaData, DatBot
 from helper.models import Server, SomeoneRoles
-from typing import TypeAlias
 
 
 # not very happy about this
@@ -156,3 +156,11 @@ class SomeoneCog(Cog):
 
 def setup(bot: DatBot):
     bot.add_cog(SomeoneCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=SomeoneCog.name,
+        key=SomeoneCog.key_loc,
+        require_key=SomeoneCog.key_enabled,
+    )

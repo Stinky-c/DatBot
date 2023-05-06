@@ -1,19 +1,15 @@
+from typing import TypeAlias
 from urllib.parse import unquote
 
 import disnake
 from disnake.ext import commands
-from helper import HTTP_CODES, DatBot
-from typing import TypeAlias
+from helper import Cog, CogMetaData, DatBot
 
 
-class HTTPCog(commands.Cog):
+class HTTPCog(Cog):
     CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "http"
-
-    def __init__(self, bot: DatBot):
-        self.bot = bot
-        self.log = bot.get_logger(f"cog.{self.name}")
 
     async def cog_load(self):
         self.client = await self.bot.make_http(self.name)
@@ -30,10 +26,7 @@ class HTTPCog(commands.Cog):
         code: an HTTP code
         """
 
-        if code in HTTP_CODES:
-            await inter.send(f"https://http.cat/{code}.jpg")
-        else:
-            await inter.send("https://http.cat/404.jpg")
+        await inter.send(f"https://http.cat/{code}.jpg")
 
     @cmd.sub_command("dog")
     async def dog_(self, inter: CmdInter, code: int):
@@ -43,10 +36,7 @@ class HTTPCog(commands.Cog):
         code: an HTTP code
         """
 
-        if code in HTTP_CODES:
-            await inter.send(f"https://http.dog/{code}.jpg")
-        else:
-            await inter.send("https://http.dog/404.jpg")
+        await inter.send(f"https://http.dog/{code}.jpg")
 
     @commands.is_owner()
     @cmd.sub_command(name="get")
@@ -71,3 +61,11 @@ class HTTPCog(commands.Cog):
 
 def setup(bot: DatBot):
     bot.add_cog(HTTPCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=HTTPCog.name,
+        key=HTTPCog.key_loc,
+        require_key=HTTPCog.key_enabled,
+    )

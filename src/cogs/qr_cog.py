@@ -5,7 +5,7 @@ import disnake
 import qrcode as qrc
 from data.qrcode import emebedHelp, errorCorrectionLevel, moddrawer
 from disnake.ext import commands
-from helper import DatBot
+from helper import Cog, CogMetaData, DatBot
 from qrcode.constants import ERROR_CORRECT_H
 from qrcode.image.styledpil import SolidFillColorMask, StyledPilImage
 from qrcode.image.svg import SvgFillImage
@@ -17,7 +17,9 @@ from qrcode.image.svg import SvgFillImage
 # this file: to use pil then default to pymaging on import error
 
 
-class QuickResponseCodeCog(commands.Cog):
+class QuickResponseCodeCog(Cog):
+    name = "quickresponse"
+
     # keep function dict in one line
     def _colorTupleHelper(self, fullcolorstr: str) -> Tuple[int, int, int]:
         colorlist = fullcolorstr.split(",")
@@ -184,3 +186,11 @@ class QuickResponseCodeCog(commands.Cog):
 
 def setup(bot: DatBot):
     bot.add_cog(QuickResponseCodeCog(bot), override=True)
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=QuickResponseCodeCog.name,
+        key=QuickResponseCodeCog.key_loc,
+        require_key=QuickResponseCodeCog.key_enabled,
+    )

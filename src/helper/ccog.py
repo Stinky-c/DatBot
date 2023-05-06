@@ -1,8 +1,10 @@
+from logging import Logger
+from typing import TYPE_CHECKING, TypeAlias
+
 import disnake
 from disnake.ext import commands
-from typing import TypeAlias, TYPE_CHECKING
+
 from .models import Server
-from logging import Logger
 
 if TYPE_CHECKING:
     from .cbot import DatBot
@@ -15,6 +17,8 @@ class Cog(commands.Cog):
     log: Logger
     bot: "DatBot"
     name = "PLACEHOLDER"
+    key_loc: str = None
+    key_enabled: bool = False
 
     def __init__(self, bot: "DatBot") -> None:
         self.bot = bot

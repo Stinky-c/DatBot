@@ -5,11 +5,11 @@ import re
 from typing import Callable, TypeAlias
 
 import disnake
+from data.math import help_embeds
 from disnake.ext import commands
-from helper import DatBot, Cog
+from helper import Cog, CogMetaData, DatBot
 from helper.errors import MathError, NotAFunction, NotAName, UnknownNode
 from helper.views import PaginatorView
-from data.math import help_embeds
 
 # alises
 fact = math.factorial
@@ -165,3 +165,11 @@ class MathCog(Cog):
 
 def setup(bot: DatBot):
     bot.add_cog(MathCog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=MathCog.name,
+        key=MathCog.key_loc,
+        require_key=MathCog.key_enabled,
+    )

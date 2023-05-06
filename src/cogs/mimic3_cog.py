@@ -1,9 +1,9 @@
+from typing import TypeAlias
+
 import disnake
 from disnake.ext import commands
-from helper import CogLoadingFailure, DatBot, Settings, Cog
-from typing import TypeAlias
+from helper import Cog, CogMetaData, DatBot, Settings, bytes2human
 from helper.mimic3 import Mimic3Wrapper
-from helper import bytes2human
 
 
 class Mimic3Cog(Cog):
@@ -13,6 +13,7 @@ class Mimic3Cog(Cog):
     GuildInter: TypeAlias = disnake.GuildCommandInteraction
     name = "mimic3"
     key_loc = "mimic3"
+    key_enabled = True
 
     async def cog_load(self):
         self.log.debug(f"{self.name} Loading")
@@ -42,7 +43,12 @@ class Mimic3Cog(Cog):
 
 
 def setup(bot: DatBot):
-    if not Settings.keys.get(Mimic3Cog.key_loc):
-        raise CogLoadingFailure(f"Missing {Mimic3Cog.key_loc} key")
-
     bot.add_cog(Mimic3Cog(bot))
+
+
+def metadata(bot: DatBot) -> CogMetaData:
+    return CogMetaData(
+        name=Mimic3Cog.name,
+        key=Mimic3Cog.key_loc,
+        require_key=Mimic3Cog.key_enabled,
+    )
