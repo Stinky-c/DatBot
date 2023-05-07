@@ -8,7 +8,6 @@ from .ctypes import URL, UUID, CogMetaData, LinkTuple
 from .emojis import Emojis
 from .errors import CogLoadingFailure, MissingCogMeta
 from .misc import (
-    build_path,
     bytes2human,
     cblock,
     gen_quote,

@@ -15,7 +15,7 @@ beanie = "^1.18.0"
 aiodns = "^3.0.0"
 orjson = "^3.8.11"
 curse-api = "^3.1.1"
-mafic = "^2.1.0"
+mafic = "^2.3.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -32,10 +32,6 @@ python_version = "3.11"
 [tool.poe.tasks]
 dev-run = "docker-compose -f docker-compose-dev.yaml up"
 dev-build = "docker-compose -f docker-compose-dev.yaml up --build"
-
-[tool.poe.tasks.schema]
-script = "src.helper.settings:schema_json"
-print_result = true
 
 
 [tool.ruff]
