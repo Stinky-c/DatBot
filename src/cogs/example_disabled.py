@@ -36,9 +36,8 @@ def setup(bot: DatBot):
     bot.add_cog(ExampleCog(bot))
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=ExampleCog.name,
-        key=ExampleCog.key_loc,
-        require_key=ExampleCog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=ExampleCog.name,
+    key=ExampleCog.key_loc,
+    require_key=ExampleCog.key_enabled,
+)

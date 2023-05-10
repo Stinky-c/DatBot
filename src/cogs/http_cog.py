@@ -63,9 +63,8 @@ def setup(bot: DatBot):
     bot.add_cog(HTTPCog(bot))
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=HTTPCog.name,
-        key=HTTPCog.key_loc,
-        require_key=HTTPCog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=HTTPCog.name,
+    key=HTTPCog.key_loc,
+    require_key=HTTPCog.key_enabled,
+)

@@ -188,9 +188,8 @@ def setup(bot: DatBot):
     bot.add_cog(QuickResponseCodeCog(bot), override=True)
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=QuickResponseCodeCog.name,
-        key=QuickResponseCodeCog.key_loc,
-        require_key=QuickResponseCodeCog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=QuickResponseCodeCog.name,
+    key=QuickResponseCodeCog.key_loc,
+    require_key=QuickResponseCodeCog.key_enabled,
+)

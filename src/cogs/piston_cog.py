@@ -79,9 +79,8 @@ def setup(bot: DatBot):
     bot.add_cog(PistonCog(bot))
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=PistonCog.name,
-        key=PistonCog.key_loc,
-        require_key=PistonCog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=PistonCog.name,
+    key=PistonCog.key_loc,
+    require_key=PistonCog.key_enabled,
+)

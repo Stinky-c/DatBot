@@ -10,7 +10,7 @@ from curse_api.ext import ManifestParser
 from curse_api.models import File, Mod
 from disnake.ext import commands
 from disnake.utils import format_dt
-from helper import Cog, CogLoadingFailure, CogMetaData, DatBot, Settings
+from helper import Cog, CogMetaData, DatBot, Settings
 from helper.ctypes import AiohttpCurseClient
 from helper.emojis import CurseforgeEmojis as Emojis
 from helper.models import CurseForgeMod
@@ -295,17 +295,11 @@ class CurseForgeCog(Cog):
 
 
 def setup(bot: DatBot):
-    conf: dict | None = Settings.keys.get(CurseForgeCog.key_loc)
-    if not conf:
-        raise CogLoadingFailure(f"Missing '{CurseForgeCog.key_loc}' key")
-    if not conf.get("enabled"):
-        return
     bot.add_cog(CurseForgeCog(bot))
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=CurseForgeCog.name,
-        key=CurseForgeCog.key_loc,
-        require_key=CurseForgeCog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=CurseForgeCog.name,
+    key=CurseForgeCog.key_loc,
+    require_key=CurseForgeCog.key_enabled,
+)

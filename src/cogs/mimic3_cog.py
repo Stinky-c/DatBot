@@ -46,9 +46,8 @@ def setup(bot: DatBot):
     bot.add_cog(Mimic3Cog(bot))
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=Mimic3Cog.name,
-        key=Mimic3Cog.key_loc,
-        require_key=Mimic3Cog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=Mimic3Cog.name,
+    key=Mimic3Cog.key_loc,
+    require_key=Mimic3Cog.key_enabled,
+)

@@ -73,9 +73,8 @@ def setup(bot: DatBot):
     bot.add_cog(SnekBoxCog(bot))
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=SnekBoxCog.name,
-        key=SnekBoxCog.key_loc,
-        require_key=SnekBoxCog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=SnekBoxCog.name,
+    key=SnekBoxCog.key_loc,
+    require_key=SnekBoxCog.key_enabled,
+)

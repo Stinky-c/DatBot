@@ -166,9 +166,7 @@ class MathCog(Cog):
 def setup(bot: DatBot):
     bot.add_cog(MathCog(bot))
 
-
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
+metadata = CogMetaData(
         name=MathCog.name,
         key=MathCog.key_loc,
         require_key=MathCog.key_enabled,

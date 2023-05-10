@@ -327,9 +327,8 @@ def setup(bot: DatBot):
     bot.add_cog(LavaLinkCog(bot))
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=LavaLinkCog.name,
-        key=LavaLinkCog.key_loc,
-        require_key=LavaLinkCog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=LavaLinkCog.name,
+    key=LavaLinkCog.key_loc,
+    require_key=LavaLinkCog.key_enabled,
+)

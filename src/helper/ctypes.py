@@ -47,11 +47,12 @@ class UUID(UUID_):
             raise e
 
 
-@dataclass()
+@dataclass
 class CogMetaData:
     name: str
-    require_key: bool
-    key: Optional[str]
+    description: str | None = None
+    require_key: bool = False
+    key: str | None = None
 
 
 class AiohttpCurseClient(APIFactory):

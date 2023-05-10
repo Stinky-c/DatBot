@@ -100,9 +100,8 @@ def setup(bot: DatBot):
     bot.add_cog(ModerationCog(bot))
 
 
-def metadata(bot: DatBot) -> CogMetaData:
-    return CogMetaData(
-        name=ModerationCog.name,
-        key=ModerationCog.key_loc,
-        require_key=ModerationCog.key_enabled,
-    )
+metadata = CogMetaData(
+    name=ModerationCog.name,
+    key=ModerationCog.key_loc,
+    require_key=ModerationCog.key_enabled,
+)

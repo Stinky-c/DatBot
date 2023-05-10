@@ -163,10 +163,6 @@ class DatBot(commands.InteractionBot):
         reconnect: bool = True,
         ignore_session_start_limit: bool = False,
     ) -> None:
-        if self.reload:
-            self.log.info("Reload enabled")
-            self.loop.create_task(self._watchdog())
-
         # register close task for signal interupts
         try:
 
@@ -280,16 +276,8 @@ class DatBot(commands.InteractionBot):
         except AttributeError:
             del sys.modules[key]
             raise errors.MissingCogMeta(key)
-
-        try:
-            result = meta(self)
-        except Exception as e:
-            del sys.modules[key]
-            self._remove_module_references(lib.__name__)
-            self._call_module_finalizers(lib, key)
-            raise derrors.ExtensionFailed(key, e) from e
         else:
-            return result
+            return meta
 
     def load_extension_meta(self, name: str) -> CogMetaData:
         """Loads extension meta data, similar to `CommonBotBase.load_extension`"""
