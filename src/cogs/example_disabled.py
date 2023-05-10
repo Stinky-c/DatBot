@@ -1,43 +1,52 @@
+# ruff: noqa: F401
+from contextvars import ContextVar
 from typing import TypeAlias
 
 import disnake
-from disnake.ext import commands
-from helper import Cog, CogMetaData, DatBot
+from disnake.ext import commands, plugins
+from helper import CogMetaData, DatBot, Settings
 
-
-class ExampleCog(Cog):
-    """This is the base cog for creating a new cog"""
-
-    CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
-    GuildInter: TypeAlias = disnake.GuildCommandInteraction
-    name = "example"
-    key_loc = None
-    key_enabled = False
-
-    async def cog_load(self):
-        # async init logic here
-        self.log.debug(f"{self.name} Loading")
-        ...
-
-    @commands.slash_command(name=name)
-    async def cmd(self, inter: CmdInter):
-        self.log.debug(f"{inter.author.name} @ {inter.guild.name}")
-
-    @cmd.sub_command(name="ping")
-    async def ping(self, inter: CmdInter, abc: str):
-        """Placeholder
-        Parameters
-        ----------
-        abc: placeholder"""
-        await inter.send(f"Pong! {round(self.bot.latency * 1000)}ms")
-
-
-def setup(bot: DatBot):
-    bot.add_cog(ExampleCog(bot))
-
-
+# Meta
 metadata = CogMetaData(
-    name=ExampleCog.name,
-    key=ExampleCog.key_loc,
-    require_key=ExampleCog.key_enabled,
+    name="example",
+    description="This is the base for creating a new cog",
+    key=None,
+    require_key=False,
 )
+plugin: plugins.Plugin[DatBot] = plugins.Plugin(
+    name=metadata.name, logger=f"cog.{metadata.name}"
+)
+
+# Aliases
+CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+GuildInter: TypeAlias = disnake.GuildCommandInteraction
+
+# Context Vars
+message: ContextVar[str] = ContextVar(metadata.name + "message", default="Pong")
+
+
+@plugin.load_hook()
+async def cog_load():
+    plugin.logger.debug(f"Hello from {metadata.name}!")
+
+
+@plugin.unload_hook()
+async def cog_unload():
+    plugin.logger.debug(f"Hello from {metadata.name}!")
+
+
+@plugin.slash_command(name=metadata)
+async def cmd(inter: CmdInter):
+    plugin.logger.debug(f"{inter.author.name} @ {inter.guild.name}")
+
+
+@cmd.sub_command(name="ping")
+async def ping(self, inter: CmdInter, abc: str):
+    """Placeholder
+    Parameters
+    ----------
+    abc: placeholder"""
+    await inter.send(f"{message.get()}! {round(plugin.bot.latency * 1000)}ms")
+
+
+setup, teardown = plugin.create_extension_handlers()

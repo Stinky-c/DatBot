@@ -14,7 +14,7 @@ dev_guilds = [111111111111111111, 111111111111111111]   # Dev guilds have dev co
 error_channel = 111111111111111111 # A channel where unhandled exceptions are logged too
 
 [keys] # some default credentials for bundled services
-music = { host = "lavalink", port = 2333, password = "youshallnotpass" } 
+music = { host = "lavalink", port = 2333, password = "youshallnotpass" }
 # music cog may accept a link to enable connection to multiple nodes
 # music = [{ host = "lavalink", port = 2333, password = "youshallnotpass" },{ host = "lavalink2", port = 2333, password = "youshallpass" }]
 snekbox = { url = "http://snekbox:8060" }
@@ -33,7 +33,7 @@ temp = { name = "temp", path = "./temp" }
 # Currently unused
 
 [logging.cog] # Command logging
-level = 10
+level = 20
 # logging levels - See src/helper/settings.py:22 for levels
 # CRITICAL = 50
 # ERROR = 40

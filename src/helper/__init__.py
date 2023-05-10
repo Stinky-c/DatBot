@@ -7,6 +7,7 @@ from .ccog import Cog
 from .ctypes import URL, UUID, CogMetaData, LinkTuple
 from .emojis import Emojis
 from .errors import CogLoadingFailure, MissingCogMeta
+from .injection import get_server
 from .misc import (
     bytes2human,
     cblock,

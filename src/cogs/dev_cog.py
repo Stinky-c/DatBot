@@ -30,8 +30,7 @@ metadata = CogMetaData(
 )
 
 plugin: "plugins.Plugin[DatBot]" = plugins.Plugin(
-    name=metadata.name,
-    logger=f"cog.{metadata.name}",
+    name=metadata.name, logger=f"cog.{metadata.name}"
 )
 
 # Aliases
@@ -42,7 +41,7 @@ GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
 
 @commands.is_owner()
-@plugin.slash_command(name="dev", guild_ids=Settings.bot.dev_guilds)
+@plugin.slash_command(name=metadata.name, guild_ids=Settings.bot.dev_guilds)
 async def cmd(inter: CmdInter):
     plugin.logger.debug(f"{inter.author} @ {inter.guild.name}: {inter.id}")
 

@@ -23,7 +23,7 @@ async def main():
                 continue
 
             bot.load_extension(cog)
-            bot.clog.info(f"Loaded '{meta.name}'")
+            bot.clog.info(f"Found '{meta.name}'")
 
     await bot.start(Settings.token.get_secret_value())
 
