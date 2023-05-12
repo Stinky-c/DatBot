@@ -4,13 +4,14 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from .cbot import DatBot
 from .ccog import Cog
-from .ctypes import URL, UUID, CogMetaData, LinkTuple
+from .ctypes import URL, UUID, CogMetaData, ConVar, LinkTuple
 from .emojis import Emojis
 from .errors import CogLoadingFailure, MissingCogMeta
 from .injection import get_server
 from .misc import (
     bytes2human,
     cblock,
+    dumpbs,
     gen_quote,
     jdumps,
     uid,

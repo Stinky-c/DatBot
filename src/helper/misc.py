@@ -42,6 +42,11 @@ def jdumps(obj: Any, size: int = 2000, json_encoder=pydantic_encoder) -> str:
     return dumped if len(dumped) <= size else "Payload too large"
 
 
+def dumpbs(obj: Any, *, options: int) -> str:
+    """Function to return orjson dumped obj in a str"""
+    return orjson.dumps(obj).decode("utf-8")
+
+
 def cblock(obj: Any, key: str = "", size: int = 2000):
     block = f"```{key}\n{obj}\n```"
     return block if len(block) <= size else "Payload too large"

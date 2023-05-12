@@ -17,7 +17,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from . import errors
 from .ctypes import CogMetaData
-from .misc import cblock
+from .misc import cblock, dumpbs
 from .models import init_models
 from .settings import BotSettings, LoggingLevels, Settings
 
@@ -200,9 +200,15 @@ class DatBot(commands.InteractionBot):
         trace_config = aiohttp.TraceConfig()
         trace_config.on_request_end.append(on_request_end)
 
+        connector = kwargs.pop(
+            "connector", aiohttp.TCPConnector(resolver=aiohttp.AsyncResolver())
+        )
+        json_serialize = kwargs.pop("json_serialize", dumpbs)
+
         sess = aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(resolver=aiohttp.AsyncResolver()),
+            connector=connector,
             trace_configs=[trace_config],
+            json_serialize=json_serialize,
             *args,
             **kwargs,
         )

@@ -1,4 +1,3 @@
-from contextvars import ContextVar
 from typing import TypeAlias
 
 import disnake
@@ -11,7 +10,7 @@ from curse_api.ext import ManifestParser
 from curse_api.models import File, Mod
 from disnake.ext import commands, plugins
 from disnake.utils import format_dt
-from helper import CogMetaData, DatBot, Settings
+from helper import CogMetaData, ConVar, DatBot, Settings
 from helper.ctypes import AiohttpCurseClient
 from helper.emojis import CurseforgeEmojis as Emojis
 from helper.models import CurseForgeMod
@@ -33,9 +32,9 @@ CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
 GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
 # Context Vars
-cfapi: ContextVar[CurseAPI] = ContextVar(metadata.name + "cfapi")
-cfparser: ContextVar[ManifestParser] = ContextVar(metadata.name + "cfparser")
-cfwebhook: ContextVar[ClientSession] = ContextVar(metadata.name + "cfwebhook")
+cfapi: ConVar[CurseAPI] = ConVar(metadata.name + "cfapi")
+cfparser: ConVar[ManifestParser] = ConVar(metadata.name + "cfparser")
+cfwebhook: ConVar[ClientSession] = ConVar(metadata.name + "cfwebhook")
 
 
 @plugin.load_hook()

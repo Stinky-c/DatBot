@@ -1,9 +1,8 @@
-from contextvars import ContextVar
 from typing import TypeAlias
 
 import disnake
 from disnake.ext import commands, plugins
-from helper import CogMetaData, DatBot, Settings, bytes2human
+from helper import CogMetaData, ConVar, DatBot, Settings, bytes2human
 from helper.mimic3 import Mimic3Wrapper
 
 # Meta
@@ -21,7 +20,7 @@ CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
 GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
 # Context Vars
-m3api: ContextVar[Mimic3Wrapper] = ContextVar(metadata.name + "api")
+m3api: ConVar[Mimic3Wrapper] = ConVar(metadata.name + "api")
 
 
 @plugin.load_hook

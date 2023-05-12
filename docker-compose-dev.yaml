@@ -11,6 +11,7 @@ services:
       - ./.ignored/music:/app/music:rw
       - ./.ignored/temp:/app/temp:rw
       - ./src/cogs:/app/cogs:rw
+      - /var/run/docker.sock:/var/run/docker.sock
     links:
       - "lavalink:lavalink"
       - "snekbox:snekbox"

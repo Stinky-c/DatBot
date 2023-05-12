@@ -1,10 +1,9 @@
 # ruff: noqa: F401
-from contextvars import ContextVar
 from typing import TypeAlias
 
 import disnake
 from disnake.ext import commands, plugins
-from helper import CogMetaData, DatBot, Settings
+from helper import CogMetaData, ConVar, DatBot, Settings
 
 # Meta
 metadata = CogMetaData(
@@ -22,26 +21,27 @@ CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
 GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
 # Context Vars
-message: ContextVar[str] = ContextVar(metadata.name + "message", default="Pong")
+message: ConVar[str] = ConVar(f"{metadata.name}.message")
 
 
 @plugin.load_hook()
 async def cog_load():
+    message.set("ABC")
     plugin.logger.debug(f"Hello from {metadata.name}!")
 
 
 @plugin.unload_hook()
 async def cog_unload():
-    plugin.logger.debug(f"Hello from {metadata.name}!")
+    plugin.logger.debug(f"Goodbye from {metadata.name}!")
 
 
-@plugin.slash_command(name=metadata)
+@plugin.slash_command(name=metadata.name)
 async def cmd(inter: CmdInter):
     plugin.logger.debug(f"{inter.author.name} @ {inter.guild.name}")
 
 
 @cmd.sub_command(name="ping")
-async def ping(self, inter: CmdInter, abc: str):
+async def ping(inter: CmdInter, abc: str):
     """Placeholder
     Parameters
     ----------

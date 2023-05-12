@@ -1,9 +1,8 @@
-from contextvars import ContextVar
 from typing import TypeAlias
 
 import disnake
 from disnake.ext import commands, plugins
-from helper import CogMetaData, DatBot, LinkTuple, Server, get_server
+from helper import CogMetaData, ConVar, DatBot, LinkTuple, Server, get_server
 
 # Meta
 metadata = CogMetaData(
@@ -22,7 +21,7 @@ MsgInter: TypeAlias = disnake.MessageCommandInteraction
 GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
 # Context Vars
-webhookhttp: ContextVar[str] = ContextVar(metadata.name + "message", default="Pong")
+webhookhttp: ConVar[str] = ConVar(metadata.name + "message", default="Pong")
 
 
 @plugin.load_hook()

@@ -1,18 +1,9 @@
-from contextvars import ContextVar
 from typing import TypeAlias
 
 import disnake
 import mafic
 from disnake.ext import commands, plugins
-from helper import (
-    CogMetaData,
-    DatBot,
-    Emojis,
-    Settings,
-    cblock,
-    jdumps,
-    uid,
-)
+from helper import CogMetaData, ConVar, DatBot, Emojis, Settings, cblock, jdumps, uid
 from helper.cbot import LavaPlayer
 
 # Meta
@@ -39,7 +30,7 @@ GuildInter: TypeAlias = disnake.GuildCommandInteraction
 # FEAT: radio feature? based on ytm?
 
 
-nodepool: ContextVar[mafic.NodePool[DatBot]] = ContextVar(metadata.name + "nodes")
+nodepool: ConVar[mafic.NodePool[DatBot]] = ConVar(metadata.name + "nodes")
 
 
 # @plugin.load_hook(post=True)

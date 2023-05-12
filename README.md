@@ -29,6 +29,7 @@ More work features and functions coming later.
         - manage docker-compose file?
 - Fool proof documentation
 - Public release?
+- Spring cleaning
 
 ## Cog dependent TODO'S
 
