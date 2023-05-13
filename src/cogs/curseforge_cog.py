@@ -205,7 +205,7 @@ async def from_search(
     )
 
 
-@cmd.sub_command("manifest")
+# @cmd.sub_command("manifest")
 async def from_manifest_(inter: CmdInter, manifest: disnake.Attachment):
     data = orjson.loads(await manifest.read())
     try:

@@ -1,5 +1,5 @@
-import typing as t
 from dataclasses import dataclass
+from typing import Any, AsyncIterator, NamedTuple, Optional
 from uuid import UUID as UUID_
 
 import aiohttp
@@ -11,7 +11,7 @@ from pydantic import HttpUrl
 CmdInter = disnake.CommandInteraction
 
 
-class LinkTuple(t.NamedTuple):
+class LinkTuple(NamedTuple):
     """A helper class for Link View
 
     Args:
@@ -60,63 +60,20 @@ class AiohttpCurseClient(APIFactory):
     def __init__(self, session: aiohttp.ClientSession) -> None:
         self._sess = session
 
-    async def get(
-        self, url: str, params: t.Optional[dict] = None
-    ) -> dict[t.Any, t.Any]:
+    async def get(self, url: str, params: Optional[dict] = None) -> dict[Any, Any]:
         res = await self._sess.get(url, params=params)
         res.raise_for_status()
         return await res.json()
 
-    async def post(
-        self, url: str, params: t.Optional[dict] = None
-    ) -> dict[t.Any, t.Any]:
+    async def post(self, url: str, params: Optional[dict] = None) -> dict[Any, Any]:
         res = await self._sess.post(url, json=params)
         res.raise_for_status()
         return await res.json()
 
-    async def download(self, url: str, chunk_size: int) -> t.AsyncIterator[bytes]:
+    async def download(self, url: str, chunk_size: int) -> AsyncIterator[bytes]:
         res = await self._sess.get(url, allow_redirects=True)
         res.raise_for_status()
-        return res.content.iter_chunked(chunk_size)
+        return res.conteniter_chunked(chunk_size)
 
     async def close(self):
         await self._sess.close()
-
-
-T = t.TypeVar("T")
-
-
-class ConVar(t.Generic[T]):
-    """ContextVars were giving me a headache, so I made a workaround with a similar api"""
-
-    """
-    TODO: add default
-    TODO: some global mapping dict
-    """
-
-    def __init__(self, name: str) -> None:
-        # if _mapping.get(name):
-        #     raise KeyError("Key already exists")
-        # _mapping[name] = self
-
-        self.__name = name
-        self.__value = None
-
-    @property
-    def name(self):
-        return self.__name
-
-    def set(self, value: T) -> T:
-        old, self.__value = self.__value, value
-        return old
-
-    def get(self, default: T = None):
-        if self.__value is None and default is not None:
-            raise LookupError("ABC")
-        return self.__value or default
-
-    def reset(self):
-        self.__value = None
-
-    def __repr__(self) -> str:
-        return f"<name={type(self).__name__} value={type(self.__value)}>"
