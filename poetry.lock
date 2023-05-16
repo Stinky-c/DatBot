@@ -676,14 +676,14 @@ pydantic = ">=1.9.0"
 
 [[package]]
 name = "mafic"
-version = "2.3.1"
+version = "2.4.1"
 description = "A properly typehinted lavalink client for discord.py, nextcord, disnake and py-cord."
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "mafic-2.3.1-py3-none-any.whl", hash = "sha256:1a1f440eae3f79d5f9a79dccd9cc8ff7e93a4503189f13b63e90f4fe8ef84557"},
-    {file = "mafic-2.3.1.tar.gz", hash = "sha256:ca15b513104bcb423fd7e47b7d64d2e2f1a019e62ea3d20ddfa3895b555a7f8e"},
+    {file = "mafic-2.4.1-py3-none-any.whl", hash = "sha256:d783e48d5e61c72d3475d9e485583ada0ca76b825e583ecb9e38c1addcb6270c"},
+    {file = "mafic-2.4.1.tar.gz", hash = "sha256:a43284975254c9e020b1ca6543e760ce0c2d2e6da16ebedfadc05ec7787b9c40"},
 ]
 
 [package.dependencies]
@@ -1379,7 +1379,7 @@ files = [
 cffi = ">=1.4.1"
 
 [package.extras]
-docs = ["sphinx (>=1.6.5)", "sphinx_rtd_theme"]
+docs = ["sphinx (>=1.6.5)", "sphinx-rtd-theme"]
 tests = ["hypothesis (>=3.27.0)", "pytest (>=3.2.1,!=3.3.0)"]
 
 [[package]]
@@ -1676,4 +1676,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ab06cd3fd6a6bef63e9ef77fd5224880a0a62c55532894a86918c51f50ac2260"
+content-hash = "1356c000e0256f05eeb9ca4d5e7c7f9fd4e4bce9723db527291cb4a1a34e8c08"
