@@ -481,7 +481,7 @@ voice = ["PyNaCl (>=1.3.0,<1.5)"]
 
 [[package]]
 name = "disnake-ext-plugins"
-version = "0.2.1"
+version = "0.2.2"
 description = "An extension for disnake providing a robust alternative to cogs."
 category = "main"
 optional = false
@@ -497,7 +497,7 @@ typing-extensions = "^4.3.0"
 type = "git"
 url = "https://github.com/DisnakeCommunity/disnake-ext-plugins"
 reference = "HEAD"
-resolved_reference = "162b4b64da9e65915aefe00d77af99c537099f3c"
+resolved_reference = "707b28c924fe79ea110b07cddb0b0b5b0c9ac635"
 
 [[package]]
 name = "distlib"
@@ -676,14 +676,14 @@ pydantic = ">=1.9.0"
 
 [[package]]
 name = "mafic"
-version = "2.3.1"
+version = "2.4.1"
 description = "A properly typehinted lavalink client for discord.py, nextcord, disnake and py-cord."
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "mafic-2.3.1-py3-none-any.whl", hash = "sha256:1a1f440eae3f79d5f9a79dccd9cc8ff7e93a4503189f13b63e90f4fe8ef84557"},
-    {file = "mafic-2.3.1.tar.gz", hash = "sha256:ca15b513104bcb423fd7e47b7d64d2e2f1a019e62ea3d20ddfa3895b555a7f8e"},
+    {file = "mafic-2.4.1-py3-none-any.whl", hash = "sha256:d783e48d5e61c72d3475d9e485583ada0ca76b825e583ecb9e38c1addcb6270c"},
+    {file = "mafic-2.4.1.tar.gz", hash = "sha256:a43284975254c9e020b1ca6543e760ce0c2d2e6da16ebedfadc05ec7787b9c40"},
 ]
 
 [package.dependencies]
@@ -861,14 +861,14 @@ files = [
 
 [[package]]
 name = "nodeenv"
-version = "1.7.0"
+version = "1.8.0"
 description = "Node.js virtual environment builder"
 category = "dev"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*"
 files = [
-    {file = "nodeenv-1.7.0-py2.py3-none-any.whl", hash = "sha256:27083a7b96a25f2f5e1d8cb4b6317ee8aeda3bdd121394e5ac54e498028a042e"},
-    {file = "nodeenv-1.7.0.tar.gz", hash = "sha256:e0e7f7dfb85fc5394c6fe1e8fa98131a2473e04311a45afb6508f7cf1836fa2b"},
+    {file = "nodeenv-1.8.0-py2.py3-none-any.whl", hash = "sha256:df865724bb3c3adc86b3876fa209771517b0cfe596beff01a92700e0e8be4cec"},
+    {file = "nodeenv-1.8.0.tar.gz", hash = "sha256:d51e0c37e64fbf47d017feac3145cdbb58836d7eee8c6f6d3b6880c5456227d2"},
 ]
 
 [package.dependencies]
@@ -1048,18 +1048,18 @@ tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "pa
 
 [[package]]
 name = "platformdirs"
-version = "3.5.0"
+version = "3.5.1"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.5.0-py3-none-any.whl", hash = "sha256:47692bc24c1958e8b0f13dd727307cff1db103fca36399f457da8e05f222fdc4"},
-    {file = "platformdirs-3.5.0.tar.gz", hash = "sha256:7954a68d0ba23558d753f73437c55f89027cf8f5108c19844d4b82e5af396335"},
+    {file = "platformdirs-3.5.1-py3-none-any.whl", hash = "sha256:e2378146f1964972c03c085bb5662ae80b2b8c06226c54b2ff4aa9483e8a13a5"},
+    {file = "platformdirs-3.5.1.tar.gz", hash = "sha256:412dae91f52a6f84830f39a8078cecd0e866cb72294a5c66808e74d5e88d251f"},
 ]
 
 [package.extras]
-docs = ["furo (>=2023.3.27)", "proselint (>=0.13)", "sphinx (>=6.1.3)", "sphinx-autodoc-typehints (>=1.23,!=1.23.4)"]
+docs = ["furo (>=2023.3.27)", "proselint (>=0.13)", "sphinx (>=6.2.1)", "sphinx-autodoc-typehints (>=1.23,!=1.23.4)"]
 test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
 
 [[package]]
@@ -1676,4 +1676,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ab06cd3fd6a6bef63e9ef77fd5224880a0a62c55532894a86918c51f50ac2260"
+content-hash = "1356c000e0256f05eeb9ca4d5e7c7f9fd4e4bce9723db527291cb4a1a34e8c08"

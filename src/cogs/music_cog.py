@@ -114,7 +114,7 @@ async def get_player(inter: CmdInter) -> LavaPlayer:
     return vc
 
 
-@commands.Cog.listener("on_track_end")
+@plugin.listener("on_track_end")
 async def on_track_end(event: mafic.TrackEndEvent):
     player: LavaPlayer = event.player
     plugin.logger.debug(f"Track ended in '{player.guild.id}': {event.reason}")
@@ -128,7 +128,7 @@ async def on_track_end(event: mafic.TrackEndEvent):
     )
 
 
-@commands.Cog.listener("on_track_exception")
+@plugin.listener("on_track_exception")
 async def on_track_exception(*args, **kwargs):  # TODO
     plugin.logger.error(args)
     plugin.logger.error(kwargs)

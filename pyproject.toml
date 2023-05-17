@@ -15,7 +15,7 @@ beanie = "^1.18.0"
 aiodns = "^3.0.0"
 orjson = "^3.8.12"
 curse-api = "^3.1.1"
-mafic = "^2.3.1"
+mafic = "^2.4.1"
 disnake-ext-plugins = { git = "https://github.com/DisnakeCommunity/disnake-ext-plugins" }
 
 
