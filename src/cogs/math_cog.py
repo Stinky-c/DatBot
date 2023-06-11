@@ -132,8 +132,9 @@ async def cmd(inter: CmdInter):
 @plugin.listener(disnake.Event.message)
 async def on_message(message: disnake.Message):
     content = message.content
-    if message.author.bot:
-        return
+
+    # if message.author.bot:
+    #     return
 
     if not reg.search(content):
         return

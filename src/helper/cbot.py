@@ -31,6 +31,7 @@ class DatBot(commands.InteractionBot):
     closeList: list[tuple[str, Coroutine]]
     _echannel: disnake.TextChannel = None
     __extensions_meta: dict[str, CogMetaData] = {}
+    httpclient: aiohttp.ClientSession  # Useful for one off http requests
 
     def __init__(
         self,
@@ -163,6 +164,9 @@ class DatBot(commands.InteractionBot):
         reconnect: bool = True,
         ignore_session_start_limit: bool = False,
     ) -> None:
+        # Setup one of attrs
+        self.httpclient = await self.make_http("internal")
+
         # register close task for signal interupts
         try:
 
@@ -205,6 +209,7 @@ class DatBot(commands.InteractionBot):
         )
         json_serialize = kwargs.pop("json_serialize", dumpbs)
 
+        # ClientSession perfers to be created in an async context?
         sess = aiohttp.ClientSession(
             connector=connector,
             trace_configs=[trace_config],
@@ -213,7 +218,7 @@ class DatBot(commands.InteractionBot):
             **kwargs,
         )
 
-        self.closeList.append(("cog." + name, sess.close()))
+        self.register_aclose(name, sess.close())
         return sess
 
     def register_aclose(self, name: str, func: Coroutine):

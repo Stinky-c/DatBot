@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datbot"
-version = "1.0.0"
+version = "1.0.1"
 description = "Another generic multi purpose discord bot"
 authors = ["Stinky-c <60587749+Stinky-c@users.noreply.github.com>"]
 
@@ -17,6 +17,8 @@ orjson = "^3.8.12"
 curse-api = "^3.1.1"
 mafic = "^2.4.1"
 disnake-ext-plugins = { git = "https://github.com/DisnakeCommunity/disnake-ext-plugins" }
+aiodocker = "^0.21.0"
+thefuzz = "^0.19.0"
 
 
 [tool.poetry.group.dev.dependencies]

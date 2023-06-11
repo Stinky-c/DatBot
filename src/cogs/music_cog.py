@@ -29,37 +29,42 @@ GuildInter: TypeAlias = disnake.GuildCommandInteraction
 # TODO: timeout after no music plays
 # FEAT: radio feature? based on ytm?
 
+# TODO: fix startup race condition
+
 
 nodepool: ConVar[mafic.NodePool[DatBot]] = ConVar(metadata.name + "nodes")
 
 
-# @plugin.load_hook(post=True)
-@plugin.load_hook()
-async def connect_node():
+@plugin.load_hook(post=True)
+async def setup_pool():
     """Connect to our Lavalink nodes."""
     nodepool.set(mafic.NodePool(plugin.bot))
 
+
+@plugin.load_hook(post=True)
+async def connect_nodes():
+    pool = nodepool.get()
     if len(nodepool.get().nodes) > 0:
         plugin.logger.info("Nodes already loaded")
-        return False
+        return
 
     conf = Settings.keys.get(metadata.key)
     if isinstance(conf, list):
         for i in conf:
-            await nodepool.get().create_node(
+            await pool.create_node(
                 host=i["host"],
                 port=i["port"],
                 password=i["password"],
                 label=i.get("label"),
             )
     else:
-        await nodepool.get().create_node(
+        await pool.create_node(
             host=conf["host"],
             port=conf["port"],
             password=conf["password"],
             label=conf.get("label", uid()),
         )
-    return True
+    return
 
 
 def is_connected():
@@ -256,7 +261,7 @@ async def nodes_(inter: CmdInter):
 async def reconnect_(inter: CmdInter):
     """Attempts to reconnect with the node"""
     await inter.send("Attempting reconnect")
-    await connect_node()
+    await connect_nodes()
 
 
 @nodes_.sub_command("disconnect")

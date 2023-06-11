@@ -2,7 +2,7 @@ version: '3'
 
 services:
   bot:
-    image: ghcr.io/stinky-c/datbot:master
+    image: ghcr.io/stinky-c/datbot:latest
     volumes:
       - ./config.toml:/app/config.toml:rw
 
@@ -14,10 +14,12 @@ services:
       - "mongo:mongo"
       - "snekbox:snekbox"
       - "lavalink:lavalink"
+
     depends_on:
-      - lavalink
-      - snekbox
-      - mongo
+      lavalink:
+        condition: service_healthy
+      snekbox: {}
+      mongo: {}
 
   mongo:
     image: mongo
@@ -25,14 +27,14 @@ services:
       - internal
 
   snekbox:
-    image: ghcr.io/python-discord/snekbox:latest
+    image: ghcr.io/python-discord/snekbox:2023.3.13.0
     networks:
       - internal
     ipc: none
     privileged: true
 
   lavalink:
-    image: fredboat/lavalink
+    image: fredboat/lavalink:3.7.5
     networks:
       - internal
     volumes:

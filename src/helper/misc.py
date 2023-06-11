@@ -35,14 +35,14 @@ async def gen_quote() -> str:
     return (await Quote.aggregate([{"$sample": {"size": 1}}], Quote).to_list())[0].quote
 
 
-def jdumps(obj: Any, size: int = 2000, json_encoder=pydantic_encoder) -> str:
+def jdumps(obj: Any, size: int = 4096, json_encoder=pydantic_encoder) -> str:
     """Dumps object to a discord code block"""
     data = orjson.dumps(obj, default=json_encoder, option=orjson.OPT_INDENT_2).decode()
     dumped = f"```json\n{data}\n```"
     return dumped if len(dumped) <= size else "Payload too large"
 
 
-def dumpbs(obj: Any, *, options: int) -> str:
+def dumpbs(obj: Any) -> str:
     """Function to return orjson dumped obj in a str"""
     return orjson.dumps(obj).decode("utf-8")
 

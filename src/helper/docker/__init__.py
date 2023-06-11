@@ -1,2 +1,2 @@
-from .api import Docker
-from .models import Container, Image
+from .api import DockerWrapper
+from .models import Container, CreateContainerConfig, Image

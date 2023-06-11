@@ -2,11 +2,11 @@ from datetime import datetime
 from typing import Optional
 from uuid import uuid4
 
+import aiohttp
 import disnake
 from beanie import Document, Indexed, init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
-import aiohttp
 
 from .ctypes import UUID
 
@@ -160,8 +160,18 @@ class Location(BaseModel):
         return f"{self.name}: {self.lat}, {self.lon}"
 
 
+# Minecraft container management
+class MinecraftContainer(Document):
+    name: str
+    containerid: str | None = None
+    image: str
+    authorid: int
+    # config: CreateContainerConfig
+    uid: str
+
+
 DocumentModels_discord = [User, Server, DiscordMessage]
-DocumentModels_data = [Quote, CurseForgeMod]
+DocumentModels_data = [Quote, CurseForgeMod, MinecraftContainer]
 
 
 async def init_models(db: AsyncIOMotorClient):

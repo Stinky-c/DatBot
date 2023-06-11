@@ -47,6 +47,32 @@ More work features and functions coming later.
 1. Modify `docker-compose.yaml` and set the bot token
 1. Run `docker-compose -d up` to start and `docker-compose down` to shutdown
 
+## Configuring Minecraft Cog
+
+### About
+
+This is a very work in progress feature that will probably be detached into its own project in the future
+
+### Requirements
+
+- An available unix docker socket
+- CurseForge api key
+- A configured docker network
+    - preferably named `mcserver`
+- A Domain with wildcard CNAME's
+
+### Configuration
+
+Update `config.toml` with the following, updating values as needed
+
+```toml
+[keys.mcserver]
+cfapikey = "< CurseForge API key>"      # The curseforge api key to support use of cf packs
+routerUrl = "http://mcrouter:25564"     # An internal router to dispatch to dependent servers
+hostUrl = "{name}.< Domain >"           # A partial fqdn to provision and point servers to
+dockerNetwork = "< Docker Network >"    # Docker network name for newly created containers to join
+```
+
 ## Notes
 
 Lavalink can only be ran on x86 due to the limitation set by lavalink. There are [alternate builds](https://github.com/Cog-Creators/Lavalink-Jars/releases) for other architectures, but support will not be provided

@@ -15,8 +15,10 @@ services:
     links:
       - "lavalink:lavalink"
       - "snekbox:snekbox"
+      # - "mcrouter:mcrouter"
     depends_on:
       - lavalink
+      # - mcrouter
       - snekbox
 
   lavalink:
@@ -33,5 +35,19 @@ services:
     ipc: none
     privileged: true
 
+
+  #? WIP
+  # mcrouter:
+  #   image: itzg/mc-router
+  #   environment:
+  #     API_BINDING: ":25564"
+  #   networks:
+  #     - internal
+  #     - mcserver
+  #   ports:
+  #     - 25565:25565
+
 networks:
   internal: {}
+  # mcserver:
+  #   external: true

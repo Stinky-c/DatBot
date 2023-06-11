@@ -1,21 +1,12 @@
 import typing as t
 
+from .ctypes import MISSING
+
 T = t.TypeVar("T")
 _MAPPING: t.Mapping[str, "ConVar"] = {}
 
 
-class _MissingType:
-    def __eq__(self, other: t.Any) -> bool:
-        return False
 
-    def __bool__(self) -> bool:
-        return False
-
-    def __repr__(self) -> str:
-        return "<MISSING>"
-
-
-MISSING: t.Any = _MissingType()
 
 
 class ConVar(t.Generic[T]):

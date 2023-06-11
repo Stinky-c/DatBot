@@ -51,6 +51,8 @@ class LoggerConfig(BaseModel):
     mode: str = "w"
 
 
+# Allow changing for nested info?
+# `cog.mcserver.http`?
 class LoggingConfig(BaseModel):
     disnake: LoggerConfig
     cog: LoggerConfig

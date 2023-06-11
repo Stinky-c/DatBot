@@ -11,6 +11,20 @@ from pydantic import HttpUrl
 CmdInter = disnake.CommandInteraction
 
 
+class _MissingType:
+    def __eq__(self, other: Any) -> bool:
+        return False
+
+    def __bool__(self) -> bool:
+        return False
+
+    def __repr__(self) -> str:
+        return "<MISSING>"
+
+
+MISSING: Any = _MissingType()
+
+
 class LinkTuple(NamedTuple):
     """A helper class for Link View
 
@@ -49,6 +63,13 @@ class UUID(UUID_):
 
 @dataclass
 class CogMetaData:
+    """
+    name: Name of the plugin/cog to load
+    description: A short description of the plugin/cog
+    require_key: determines if a key field is needed
+    key: the string name to the field object
+    skip: skip loading the plugin/cog. Disables unfinished cogs
+    """
     name: str
     description: str | None = None
     require_key: bool = False

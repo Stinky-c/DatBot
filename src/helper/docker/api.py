@@ -1,50 +1,82 @@
-from typing import TYPE_CHECKING
+import aiodocker.containers
 
-from .models import Image
+from helper.models import MinecraftContainer
 
-if TYPE_CHECKING:
-    from aiohttp import ClientSession
+from .models import CreateContainerConfig, Image
 
-
-class BaseDocker:
-    def __init__(self, docker: "Docker") -> None:
-        self._docker = docker
+# TODO: An api that does what i fucking want
+# better typing and interface
 
 
-class DockerImages(BaseDocker):
-    # async def list(self, all: bool=False, limit: int):
-    async def list(self) -> list[Image]:
-        data = await self._docker._get("/images/json")
-        return [Image.parse_obj(d) for d in data]
+class DockerWrapper:
+    def __init__(self, docker: aiodocker.Docker) -> None:
+        self.docker = docker
 
+    async def ping(self) -> str:
+        """
+        !Ping
 
-class DockerContainers(BaseDocker):
-    ...
+        Pong!
+        """
+        return (await self.docker.version())["Version"]
 
+    async def get_container(
+        self, id: str
+    ) -> tuple[aiodocker.containers.DockerContainer, MinecraftContainer]:
+        """Gets container by id"""
+        mccontainer = await MinecraftContainer.find_one(
+            MinecraftContainer.containerid == id
+        )
+        container = await self.docker.containers.get(id)
+        return container, mccontainer
 
-class Docker:
-    """A simple docker api wrapper"""
+    async def stop_container(self, id: str):
+        """Stops a docker container"""
+        container = await self.docker.containers.get(id)
+        await container.stop()
 
-    def __init__(self, client: "ClientSession") -> None:
-        self._client = client
+    async def create_container(
+        self,
+        image: str,
+        network: str,
+        env: dict[str, str],
+        server_id: str,
+        author_id: int,
+        start: bool = True,
+    ):
+        """Creates a containers from the given config"""
+        await self.ensure_image(image)
 
-        self._images = DockerImages(self)
-        self._containers = DockerContainers(self)
+        # Docker config
+        containerconf = CreateContainerConfig(
+            Env=[f"{k}={v}" for k, v in env.items()],
+            Image=image,
+            HostConfig={
+                "NetworkMode": network,
+            },
+            NetworkingConfig={"EndpointsConfig": {network: {"Aliases": [server_id]}}},
+        )
 
-    @property
-    def images(self) -> DockerImages:
-        return self._images
+        # Mongo thingy
+        server = MinecraftContainer(
+            name=f"mcserver-{server_id}",
+            uid=server_id,
+            # config=containerconf,
+            image=image,
+            authorid=author_id,
+        )
+        # Create container in docker and update database entry
+        container = await self.docker.containers.create(
+            config=containerconf, name=server.name
+        )
+        server.containerid = container.id
+        if start:
+            await container.start()
+        return await server.create()
 
-    @property
-    async def containers(self):
-        return self._containers
+    async def list_images(self) -> list[Image]:
+        """Lists all docker images"""
+        return [Image.parse_obj(x) for x in await self.docker.images.list()]
 
-    async def _get(self, url: str, params: dict = {}) -> dict:
-        async with self._client.get(url, params=params) as req:
-            req.raise_for_status()
-            return await req.json()
-
-    async def _post(self, url: str, data: dict):
-        async with self._client.post(url, data=data) as req:
-            req.raise_for_status()
-            return await req.json()
+    async def ensure_image(self, image: str):
+        """Ensures the image is present"""
