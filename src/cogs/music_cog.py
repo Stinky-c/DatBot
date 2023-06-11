@@ -142,7 +142,7 @@ async def on_track_exception(*args, **kwargs):  # TODO
 @plugin.slash_command(name=metadata.name)
 @commands.guild_only()
 @is_connected()
-@commands.cooldown(1, 1, commands.BucketType.member)  # once a second
+@commands.cooldown(1, 1, commands.BucketType.guild)  # once a second per server
 async def cmd(inter: CmdInter):
     plugin.logger.debug(f"{inter.author.name} @ {inter.guild.name}")
 

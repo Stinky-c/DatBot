@@ -28,6 +28,7 @@ fact = math.factorial
 
 # AST math operations
 math_op = {
+    # Negitive Function
     ast.USub: op.neg,
     # Basic math
     ast.Add: op.add,
