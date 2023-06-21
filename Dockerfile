@@ -1,4 +1,4 @@
-FROM python:3.11.2-slim AS install
+FROM python:3.11.3-slim AS install
 
 ARG APT_INSTALL_REMOVABLE="curl"
 ARG APT_INSTALL=""

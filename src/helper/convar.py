@@ -6,9 +6,6 @@ T = t.TypeVar("T")
 _MAPPING: t.Mapping[str, "ConVar"] = {}
 
 
-
-
-
 class ConVar(t.Generic[T]):
     """
     ContextVars were giving me a headache, so I made a workaround with a similar api.
@@ -48,3 +45,6 @@ class ConVar(t.Generic[T]):
 
     def __repr__(self) -> str:
         return f"<class {type(self).__name__}  name={self.name} value={type(self._value)} >"
+
+    def __bool__(self) -> bool:
+        return bool(self._value)

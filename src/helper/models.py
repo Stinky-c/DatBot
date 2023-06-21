@@ -17,7 +17,6 @@ class User(Document):
     uid: Indexed(int)
     avatarUrl: str
     name: str
-    discriminator: str
     notes: list[str] = []
 
     class Settings:
@@ -29,12 +28,7 @@ class User(Document):
             uid=user.id,
             avatarUrl=user.display_avatar.url,
             name=user.name,
-            discriminator=user.discriminator,
         )
-
-    @property
-    def full(self):
-        return f"{self.name}#{self.discriminator}"
 
     @property
     def mention(self):

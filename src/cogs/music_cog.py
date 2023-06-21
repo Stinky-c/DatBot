@@ -29,8 +29,6 @@ GuildInter: TypeAlias = disnake.GuildCommandInteraction
 # TODO: timeout after no music plays
 # FEAT: radio feature? based on ytm?
 
-# TODO: fix startup race condition
-
 
 nodepool: ConVar[mafic.NodePool[DatBot]] = ConVar(metadata.name + "nodes")
 
@@ -38,11 +36,13 @@ nodepool: ConVar[mafic.NodePool[DatBot]] = ConVar(metadata.name + "nodes")
 @plugin.load_hook(post=True)
 async def setup_pool():
     """Connect to our Lavalink nodes."""
+    await plugin.bot.wait_until_ready()
     nodepool.set(mafic.NodePool(plugin.bot))
 
 
 @plugin.load_hook(post=True)
 async def connect_nodes():
+    await plugin.bot.wait_until_ready()
     pool = nodepool.get()
     if len(nodepool.get().nodes) > 0:
         plugin.logger.info("Nodes already loaded")
@@ -51,6 +51,9 @@ async def connect_nodes():
     conf = Settings.keys.get(metadata.key)
     if isinstance(conf, list):
         for i in conf:
+            plugin.logger.debug(
+                f"Creating node: Host: '{i['host']}' Port: '{i['port']}' "
+            )
             await pool.create_node(
                 host=i["host"],
                 port=i["port"],
@@ -58,6 +61,9 @@ async def connect_nodes():
                 label=i.get("label"),
             )
     else:
+        plugin.logger.debug(
+            f"Creating node: Host: '{conf['host']}' Port: '{conf['port']}' "
+        )
         await pool.create_node(
             host=conf["host"],
             port=conf["port"],
@@ -129,7 +135,9 @@ async def on_track_end(event: mafic.TrackEndEvent):
     await player.play(to_play)
     embed = embed_factory(to_play)
     await player.managed.send(
-        f"Now playing '{to_play.title}'", embed=disnake.Embed.from_dict(embed)
+        f"Now playing '{to_play.title}'",
+        embed=disnake.Embed.from_dict(embed),
+        delete_after=3,
     )
 
 
@@ -194,6 +202,7 @@ async def playing_(inter: CmdInter, vc: LavaPlayer):
         return await inter.send("The bot is not currently playing")
     embed = embed_factory(current)
     await inter.send(embed=disnake.Embed.from_dict(embed))
+
 
 
 @cmd.sub_command("skip")
