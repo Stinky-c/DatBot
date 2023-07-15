@@ -137,7 +137,7 @@ async def on_track_end(event: mafic.TrackEndEvent):
     await player.managed.send(
         f"Now playing '{to_play.title}'",
         embed=disnake.Embed.from_dict(embed),
-        delete_after=3,
+        delete_after=10,
     )
 
 
@@ -189,7 +189,7 @@ async def play_(inter: CmdInter, vc: LavaPlayer, search: str, replace: bool = Fa
         message = f"Now queuing '{next_play.title}'"
 
     embed = embed_factory(next_play)
-    await inter.send(message, embed=disnake.Embed.from_dict(embed))
+    await inter.send(message, embed=disnake.Embed.from_dict(embed), delete_after=30)
     plugin.logger.debug(message + f" in '{inter.guild!s}'")
 
 
@@ -202,7 +202,6 @@ async def playing_(inter: CmdInter, vc: LavaPlayer):
         return await inter.send("The bot is not currently playing")
     embed = embed_factory(current)
     await inter.send(embed=disnake.Embed.from_dict(embed))
-
 
 
 @cmd.sub_command("skip")
