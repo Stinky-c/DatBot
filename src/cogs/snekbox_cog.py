@@ -4,6 +4,7 @@ from typing import TypeAlias
 import disnake
 from disnake.ext import commands
 from helper import CogMetaData, DatBot, Settings
+from helper.csettings import SnekboxConfig
 
 
 class SnekBoxCog(commands.Cog):
@@ -29,13 +30,14 @@ class SnekBoxCog(commands.Cog):
         self.log = bot.get_logger(f"cog.{self.name}")
 
     async def cog_load(self):
-        snekconfig: dict = Settings.keys.get(self.key_loc)
+        snekconfig: SnekboxConfig = Settings.keys.get(self.key_loc, SnekboxConfig)
+
         snekbox_headers = {"User-Agent": "github.com/stinky-c"}
-        if auth := snekconfig.get("auth"):
+        if auth := snekconfig.auth:
             snekbox_headers["Authorization"] = auth
 
         self.client = await self.bot.make_http(
-            self.name, base_url=snekconfig.get("url"), headers=snekbox_headers
+            self.name, base_url=snekconfig.url, headers=snekbox_headers
         )
 
     async def snek_eval(self, code: str) -> dict:

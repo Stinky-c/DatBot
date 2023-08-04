@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datbot"
-version = "1.0.1"
+version = "1.1.0"
 description = "Another generic multi purpose discord bot"
 authors = ["Stinky-c <60587749+Stinky-c@users.noreply.github.com>"]
 

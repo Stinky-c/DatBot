@@ -3,9 +3,10 @@ from typing import TYPE_CHECKING, TypeAlias
 import aiohttp
 import disnake
 from aiodocker import Docker, DockerError
-from data.mcserver import MCServerConfig, ServerTags
+from data.mcserver import ServerTags
 from disnake.ext import plugins
 from helper import CogMetaData, ConVar, DatBot, Settings, uid
+from helper.csettings import MCServerConfig
 from helper.docker import DockerWrapper
 from helper.models import MinecraftContainer
 from thefuzz import process
@@ -63,15 +64,14 @@ a system for creating and managing docker instances of minecraft
 
 # Consts
 LOGGER = plugin.logger
-SETTINGS: MCServerConfig = Settings.keys.get(metadata.key)
-DEFAULT_DOCKER_SOCKET = "/var/run/docker.sock"
+SETTINGS: MCServerConfig = Settings.keys.get(metadata.key, MCServerConfig)
 SERVER_ENV = {
     "EULA": True,
     "USE_MODPACK_START_SCRIPT": False,
     "ENABLE_AUTOPAUSE": True,
     "MAX_PLAYERS": 5,
     "USE_AIKAR_FLAGS": True,
-    "CF_API_KEY": SETTINGS["cfapikey"],
+    "CF_API_KEY": SETTINGS.cfapikey,
 }
 HEADERS = {"Content-Type": "application/json", "Accept": "application/json"}
 
@@ -81,9 +81,7 @@ HEADERS = {"Content-Type": "application/json", "Accept": "application/json"}
 async def docker_create():
     http = await plugin.bot.make_http(
         name=metadata.name,
-        connector=aiohttp.UnixConnector(
-            SETTINGS.get("dockerSocket", DEFAULT_DOCKER_SOCKET)
-        ),
+        connector=aiohttp.UnixConnector(SETTINGS.dockerSocket),
     )
     docker = DockerWrapper(Docker(session=http))
     dockerw.set(docker)
@@ -94,7 +92,7 @@ async def docker_create():
 async def router_load():
     # TODO: register all servers and their routes on boot, or find a method to persist
     async with plugin.bot.httpclient.get(
-        SETTINGS["routerUrl"] + "/routes", headers=HEADERS
+        SETTINGS.routerUrl + "/routes", headers=HEADERS
     ) as res:
         res.raise_for_status()
 
@@ -136,7 +134,7 @@ def check_tag(images: "list[Image]", tag: str):
 
 # Erm?
 def gen_fqdn(name: str):
-    return SETTINGS["hostUrl"].format(name=name)
+    return SETTINGS.hostUrl.format(name=name)
 
 
 async def register_route(host: str, port: int, name: str):
@@ -148,7 +146,7 @@ async def register_route(host: str, port: int, name: str):
         "backend": f"{host}:{port}",
     }
     async with client.post(
-        SETTINGS["routerUrl"] + "/routes",
+        SETTINGS.routerUrl + "/routes",
         json=data,
         headers=HEADERS,
     ) as res:
@@ -178,7 +176,7 @@ async def create_server(
     env = SERVER_ENV.copy()
     server = await docker.create_container(
         image=f"itzg/minecraft-server:{tag}",
-        network=SETTINGS["dockerNetwork"],
+        network=SETTINGS.dockerNetwork,
         env=env,
         server_id=uid(),
         author_id=inter.author.id,

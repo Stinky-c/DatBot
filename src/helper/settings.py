@@ -18,6 +18,8 @@ from pydantic import (
 )
 from pydantic.json import pydantic_encoder
 
+from helper.ctypes import PydanticDict
+
 
 class LoggingLevels(IntEnum):
     """Logging levels for the `logging` module"""
@@ -118,7 +120,7 @@ class BotSettings(BaseSettings):
     logging: LoggingConfig
 
     # API keys
-    keys: DefaultDict[str, Any]
+    keys: PydanticDict = PydanticDict()
 
     # directories
     dir: DefaultDict[str, Directory]

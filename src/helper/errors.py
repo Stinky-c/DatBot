@@ -1,6 +1,7 @@
 from typing import Optional
 
 from disnake.ext.commands.errors import ExtensionError
+from pydantic.error_wrappers import ValidationError
 
 # Bot errors
 
@@ -14,6 +15,14 @@ class MissingCogMeta(ExtensionError):
 
     def __init__(self, name: str) -> None:
         super().__init__(f"Extension {name!r} has no 'metadata' function.", name=name)
+
+
+class ImproperConfiguration(Exception):
+    """A improper Bot configuation is preventing startup"""
+
+    def __init__(self, message: str, error: ValidationError) -> None:
+        self.message = message
+        self.error = error
 
 
 # RCON errors

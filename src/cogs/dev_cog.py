@@ -37,8 +37,6 @@ plugin: "plugins.Plugin[DatBot]" = plugins.Plugin(
 CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
 GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
-# Context Vars
-
 
 @commands.is_owner()
 @plugin.slash_command(name=metadata.name, guild_ids=Settings.bot.dev_guilds)

@@ -4,6 +4,7 @@ from typing import TypeAlias
 import disnake
 from disnake.ext import commands
 from helper import Cog, CogMetaData, DatBot, Settings
+from helper.csettings import PistonConfig
 from helper.models import PistonEvalResponse
 
 FORMATTED_CODE_REGEX = re.compile(
@@ -26,8 +27,8 @@ class PistonCog(Cog):
     key_enabled = True
 
     async def cog_load(self):
-        self.conf: dict = Settings.keys.get(self.key_loc)
-        base_url = self.conf.get("url", "https://emkc.org/")
+        self.conf: PistonConfig = Settings.keys.get(self.key_loc, PistonConfig)
+        base_url = self.conf.url
         self.client = await self.bot.make_http(self.name, base_url=base_url)
         self.runtimes = await self.runtimes_piston()
 

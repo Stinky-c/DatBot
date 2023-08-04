@@ -5,6 +5,7 @@ import mafic
 from disnake.ext import commands, plugins
 from helper import CogMetaData, ConVar, DatBot, Emojis, Settings, cblock, jdumps, uid
 from helper.cbot import LavaPlayer
+from helper.csettings import MusicConfig
 
 # Meta
 metadata = CogMetaData(
@@ -30,7 +31,7 @@ GuildInter: TypeAlias = disnake.GuildCommandInteraction
 # FEAT: radio feature? based on ytm?
 
 
-nodepool: ConVar[mafic.NodePool[DatBot]] = ConVar(metadata.name + "nodes")
+nodepool: ConVar[mafic.NodePool[DatBot]] = ConVar(f"{metadata.name}.nodes")
 
 
 @plugin.load_hook(post=True)
@@ -48,27 +49,18 @@ async def connect_nodes():
         plugin.logger.info("Nodes already loaded")
         return
 
-    conf = Settings.keys.get(metadata.key)
-    if isinstance(conf, list):
-        for i in conf:
-            plugin.logger.debug(
-                f"Creating node: Host: '{i['host']}' Port: '{i['port']}' "
-            )
-            await pool.create_node(
-                host=i["host"],
-                port=i["port"],
-                password=i["password"],
-                label=i.get("label"),
-            )
-    else:
+    conf: MusicConfig = Settings.keys.get(metadata.key, MusicConfig)
+
+    for i in conf.nodes:
+        label = i.label or uid()
         plugin.logger.debug(
-            f"Creating node: Host: '{conf['host']}' Port: '{conf['port']}' "
+            f"Creating node: Id: {label} <Host: '{i.host}' Port: '{i.port}'> "
         )
         await pool.create_node(
-            host=conf["host"],
-            port=conf["port"],
-            password=conf["password"],
-            label=conf.get("label", uid()),
+            host=i.host,
+            port=i.port,
+            password=i.password,
+            label=label,
         )
     return
 

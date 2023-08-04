@@ -11,6 +11,7 @@ from curse_api.models import File, Mod
 from disnake.ext import commands, plugins
 from disnake.utils import format_dt
 from helper import CogMetaData, ConVar, DatBot, Settings
+from helper.csettings import CurseForgeConfig
 from helper.ctypes import AiohttpCurseClient
 from helper.emojis import CurseforgeEmojis as Emojis
 from helper.models import CurseForgeMod
@@ -32,26 +33,24 @@ CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
 GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
 # Context Vars
-cfapi: ConVar[CurseAPI] = ConVar(metadata.name + "cfapi")
-cfparser: ConVar[ManifestParser] = ConVar(metadata.name + "cfparser")
-cfwebhook: ConVar[ClientSession] = ConVar(metadata.name + "cfwebhook")
+cfapi: ConVar[CurseAPI] = ConVar(f"{metadata.name}.cfapi")
+cfparser: ConVar[ManifestParser] = ConVar(f"{metadata.name}.cfparser")
+cfwebhook: ConVar[ClientSession] = ConVar(f"{metadata.name}.cfwebhook")
 
 
 @plugin.load_hook()
 async def cog_load():
-    conf: dict[str, str] = Settings.keys.get(metadata.key)
-    key = conf.get("key")
-    url = conf.get("url")
+    conf: CurseForgeConfig = Settings.keys.get(metadata.key, CurseForgeConfig)
     # Curse api - API wrapper is a consumer of a aiohttp client
     http = await plugin.bot.make_http(
         metadata.name + "_api",
         headers={
-            "X-API-KEY": key,
+            "X-API-KEY": conf.key,
             "Content-Type": "application/json",
             "Accept": "application/json",
             "user-agent": "stinky-c/curse-api",
         },
-        base_url=url or "https://api.curseforge.com",
+        base_url=conf.url,
     )
     api = AiohttpCurseClient(http)
     cfapi.set(CurseAPI(api))

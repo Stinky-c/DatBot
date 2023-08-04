@@ -21,7 +21,7 @@ MsgInter: TypeAlias = disnake.MessageCommandInteraction
 GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
 # Context Vars
-webhookhttp: ConVar[str] = ConVar(metadata.name + "message", default="Pong")
+webhookhttp: ConVar[str] = ConVar(f"{metadata.name}.message", default="Pong")
 
 
 @plugin.load_hook()

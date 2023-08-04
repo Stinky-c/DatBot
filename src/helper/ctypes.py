@@ -1,14 +1,19 @@
+from collections import UserDict
 from dataclasses import dataclass
-from typing import Any, AsyncIterator, NamedTuple, Optional
+from typing import Any, AsyncIterator, NamedTuple, Optional, TypeAlias, TypeVar
 from uuid import UUID as UUID_
 
 import aiohttp
 import disnake
 from curse_api.abc import APIFactory
 from disnake.ext import commands
-from pydantic import HttpUrl
+from pydantic import BaseModel, HttpUrl
+from pydantic.error_wrappers import ValidationError
 
-CmdInter = disnake.CommandInteraction
+from helper.errors import ImproperConfiguration
+
+CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
+T = TypeVar("T", bound=BaseModel)
 
 
 class _MissingType:
@@ -70,6 +75,7 @@ class CogMetaData:
     key: the string name to the field object
     skip: skip loading the plugin/cog. Disables unfinished cogs
     """
+
     name: str
     description: str | None = None
     require_key: bool = False
@@ -98,3 +104,28 @@ class AiohttpCurseClient(APIFactory):
 
     async def close(self):
         await self._sess.close()
+
+
+class PydanticDict(UserDict):
+    """Finds a key and attempts to return a populated pydantic model"""
+
+    def get(self, key: Any, cls: T) -> T:
+        return self.__getitem__(key, cls)
+
+    def __getitem__(self, __key: Any, cls: T) -> T:
+        v = super().__getitem__(__key)
+        try:
+            obj = cls.parse_obj(v)
+            return obj
+        except ValidationError as exc:
+            raise ImproperConfiguration(f"'{__key}' is improperly configured.", exc)
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not isinstance(v, dict):
+            raise TypeError(f"Expected '{dict!r}' got '{v!r}'")
+        return cls(v)

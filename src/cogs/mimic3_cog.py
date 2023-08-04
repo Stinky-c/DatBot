@@ -20,7 +20,7 @@ CmdInter: TypeAlias = disnake.ApplicationCommandInteraction
 GuildInter: TypeAlias = disnake.GuildCommandInteraction
 
 # Context Vars
-m3api: ConVar[Mimic3Wrapper] = ConVar(metadata.name + "api")
+m3api: ConVar[Mimic3Wrapper] = ConVar(f"{metadata.name}.api")
 
 
 @plugin.load_hook

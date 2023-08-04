@@ -30,6 +30,7 @@ More work features and functions coming later.
 - Fool proof documentation
 - Public release?
 - Spring cleaning
+- Update Examples
 
 ## Cog dependent TODO'S
 

@@ -1,6 +1,6 @@
 import re
 from enum import StrEnum
-from typing import Any, TypedDict
+from typing import TypedDict
 
 VERSION_REGEX = re.compile(
     r"^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)"
@@ -11,15 +11,6 @@ class MinecraftVersion(TypedDict):
     major: int
     minor: int
     patch: int
-
-
-class MCServerConfig(TypedDict):
-    cfapikey: str  # Curseforge api key
-    routerUrl: str  # Url to mc-router
-    hostUrl: str  # Base url for mcservers
-    dockerSocket: str  # a docker socket. defaults to `/var/run/docker.sock`
-    dockerNetwork: str  # Name identifter for docker network
-    extraEnv: dict[str, Any]
 
 
 #
@@ -76,7 +67,7 @@ class MinecraftVersions(StrEnum):
     v_1_13_2 = "1.13.2"
     v_1_13_1 = "1.13.1"
     v_1_13 = "1.13"
-    #1.12
+    # 1.12
     v_1_12_2 = "1.12.2"
     v_1_12_1 = "1.12.1"
     v_1_12 = "1.12"
