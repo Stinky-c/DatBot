@@ -8,20 +8,42 @@ command_flag = 30
 intents_flag = 3276799
 activity_str = "The Ducks"
 activity_type = 3
-owner_ids = [111111111111111111] # Replace with owner ids or leave blank for auto
-test_guilds = [111111111111111111, 111111111111111111]  # Test guilds register commands faster
-dev_guilds = [111111111111111111, 111111111111111111]   # Dev guilds have dev commands enabled, and provide debugging tools
-error_channel = 111111111111111111 # A channel where unhandled exceptions are logged too
 
-[keys] # some default credentials for bundled services
-music = { host = "lavalink", port = 2333, password = "youshallnotpass" }
-# music cog may accept a link to enable connection to multiple nodes
-# music = [{ host = "lavalink", port = 2333, password = "youshallnotpass" },{ host = "lavalink2", port = 2333, password = "youshallpass" }]
-snekbox = { url = "http://snekbox:8060" }
-piston = { url = "https://emkc.org/" }
-# some optional services that require a key have a `enabled` field
-cfcore = { enabled = false, key = "<Curse Forge API key>" }
-mimic3 = {url="<http mimic3 webserver>"}
+# Replace with owner ids or leave blank for auto
+owner_ids = [111111111111111111]
+# Test guilds register commands faster
+test_guilds = [111111111111111111, 111111111111111111]
+# Dev guilds have dev commands enabled, and provide debugging tools
+dev_guilds = [111111111111111111, 111111111111111111]
+# A channel where unhandled exceptions are logged too
+error_channel = 111111111111111111
+
+
+# some default settings and credentials for bundled services
+[keys.music] # This module uses lavalink to play music commonly supporting only youtube
+enabled = true
+nodes = [{ host = "lavalink", port = 2333, password = "youshallnotpass" }]
+# this may contain more then 1 node
+
+
+[keys.snekbox] # Snekbox is a sanboxed python runtime created by the python discord communiuty
+enabled = true
+url = "http://snekbox:8060"
+
+
+[keys.piston] # Piston is a secondary sandboxed runtime that supports a larger range of languages
+enabled = true
+url = "https://emkc.org/"
+
+
+[keys.cfcore] # Curseforge is a common modding platfrom, while its focus here is about minecraft, it supports other games too
+enabled = false
+key = "<Curse Forge API key>"
+
+
+[keys.mimic3] # Mimic 3 is a open source TTS engine designed for low end hardware
+enabled = false
+url = "<http mimic3 webserver>"
 
 
 [dir] # Directories for various cogs
@@ -34,7 +56,7 @@ temp = { name = "temp", path = "./temp" }
 
 [logging.cog] # Command logging
 level = 20
-# logging levels - See src/helper/settings.py:22 for levels
+# logging levels - See src/helper/settings.py:24 for levels
 # CRITICAL = 50
 # ERROR = 40
 # WARNING = 30
@@ -44,7 +66,7 @@ level = 20
 
 [logging.disnake]
 logfile = "./disnake.log" # defining logfile will enable logging to file
-encoding = "utf-8" # the default encoding method may be changed
+encoding = "utf-8"        # the default encoding method may be changed, but is best left as is
 level = 40
 
 [logging.bot] # logging for bot
