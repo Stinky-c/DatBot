@@ -27,7 +27,7 @@ services:
       - internal
 
   snekbox:
-    image: ghcr.io/python-discord/snekbox:2023.3.13.0
+    image: ghcr.io/python-discord/snekbox:2023.6.23.1
     networks:
       - internal
     ipc: none

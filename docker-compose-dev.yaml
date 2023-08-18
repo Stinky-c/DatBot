@@ -29,7 +29,7 @@ services:
       - ./.ignored/application.yml/:/opt/Lavalink/application.yml:rw
 
   snekbox:
-    image: ghcr.io/python-discord/snekbox:latest
+    image: ghcr.io/python-discord/snekbox:2023.6.23.1
     networks:
       - internal
     ipc: none
