@@ -15,8 +15,10 @@ async def main():
             continue
         except CogLoadingFailure as e:
             bot.clog.error(e)
+            continue
         except Exception as e:
             bot.clog.exception(f"Unknown error: {cog}", e)
+            continue
 
         else:
             # requirement checks

@@ -42,7 +42,7 @@ class SomeoneRoles(BaseModel):
 
 class Server(Document):
     id: UUID = Field(default_factory=uuid4)
-    sid: Indexed(int)
+    sid: int
     ownId: Indexed(int)
     name: str
     checks: Optional[list[dict]]

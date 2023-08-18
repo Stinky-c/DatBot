@@ -34,7 +34,7 @@ services:
     privileged: true
 
   lavalink:
-    image: fredboat/lavalink:3.7.5
+    image: fredboat/lavalink:3.7.8
     networks:
       - internal
     volumes:
