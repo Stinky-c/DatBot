@@ -15,7 +15,7 @@ beanie = "^1.20.0"
 aiodns = "^3.0.0"
 orjson = "^3.9.2"
 curse-api = "^3.1.1"
-mafic = "^2.9.2"
+mafic = "^2.9.3"
 disnake-ext-plugins = { git = "https://github.com/DisnakeCommunity/disnake-ext-plugins.git", rev = "36fe244fedd1253bcfcad1ebb1d69501a17f5961" }
 aiodocker = "^0.21.0"
 thefuzz = { extras = ["speedup"], version = "^0.19.0" }
