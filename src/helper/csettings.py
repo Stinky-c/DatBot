@@ -29,7 +29,7 @@ class PistonConfig(BasePluginConfig):
 # Music
 class MusicNodeModel(BaseModel):
     host: str
-    port: str
+    port: int
     password: str
     label: str | None
 
