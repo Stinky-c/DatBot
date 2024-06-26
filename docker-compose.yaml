@@ -34,7 +34,7 @@ services:
     privileged: true
 
   lavalink:
-    image: ghcr.io/lavalink-devs/lavalink:3.7.8
+    image: ghcr.io/lavalink-devs/lavalink:4.0.6
     networks:
       - internal
     volumes:
