@@ -77,3 +77,5 @@ dockerNetwork = "< Docker Network >"    # Docker network name for newly created 
 ## Notes
 
 Lavalink can only be ran on x86 due to the limitation set by lavalink. There are [alternate builds](https://github.com/Cog-Creators/Lavalink-Jars/releases) for other architectures, but support will not be provided
+
+Lavalink dropped native support for youtube; use [lavalink-devs/youtube-source](https://github.com/lavalink-devs/youtube-source) and add it to lavalink configuration as needed
