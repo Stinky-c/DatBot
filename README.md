@@ -1,5 +1,7 @@
 # Datbot
 
+Archived repo; Most features are still work, but this project has not been maintained for a long time. 
+
 A crude selfhosted discord bot
 
 ## Features
